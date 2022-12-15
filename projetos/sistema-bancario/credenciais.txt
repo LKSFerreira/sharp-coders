@@ -1,0 +1,6 @@
+usuario:senha
+admin:admin
+usuario:123
+teste:teste
+alisson:ali123
+lksferreira:lks123
