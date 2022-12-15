@@ -3,13 +3,14 @@ namespace sistema_bancario
     public class InterfaceDoSistema
     {
         private static string[] credenciais = File.ReadAllLines("credenciais.txt");
+        private static string[] clientes = File.ReadAllLines("clientes.txt");
+
         public static bool LoginSistem()
         {
             bool usuarioLogado = false;
 
             do
             {
-
                 IA.iBank("Por gentileza, digite seu usuário:");
                 var usuario = Console.ReadLine()!;
                 IA.iBank("Agora digite a senha por favor:");
@@ -24,12 +25,18 @@ namespace sistema_bancario
                         break;
                     }
                 }
-
                 if (!usuarioLogado) IA.iBank("Usuário ou Senha inválido");
-
             } while (!usuarioLogado);
-
             return usuarioLogado;
+        }
+        private static void ListAccounts()
+        {
+            int idConta = clientes.Length - (clientes.Length - 1);
+            foreach (var linha in clientes)
+            {
+                System.Console.WriteLine($"ID: {idConta} | Titular: {linha.Split(':')[0]} | CPF: {linha.Split(':')[1]} | Saldo: {linha.Split(':')[3]}");
+                idConta++;
+            }
         }
 
         public static int ShowMenu()
@@ -44,7 +51,11 @@ namespace sistema_bancario
             System.Console.WriteLine();
             IA.iBank("Digite o número da opção");
 
-            return int.Parse(Console.ReadLine()!);
+            string entradaUsuario = Console.ReadLine()!;
+
+            if (int.TryParse(entradaUsuario, out int opcaoMenu))
+                return opcaoMenu;
+            else return -1;
         }
 
         public static void SelectMenu(int opcaoMenu)
@@ -56,6 +67,7 @@ namespace sistema_bancario
                     break;
                 case 2:
                     System.Console.WriteLine("Listou contas registrada");
+                    ListAccounts();
                     break;
                 case 3:
                     System.Console.WriteLine("Acessou uma conta");
@@ -66,7 +78,7 @@ namespace sistema_bancario
                 case 5:
                     System.Console.WriteLine("Realizou uma operacao");
                     break;
-                case 0: 
+                case 0:
                     System.Console.WriteLine();
                     IA.iBank("Obrigado por utlizar nossos serviços");
                     LogoByteBank();

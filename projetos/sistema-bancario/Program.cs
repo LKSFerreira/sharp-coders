@@ -6,7 +6,7 @@ internal class Program
     {
         //InterfaceDoSistema.LoadSistem();
 
-        if (InterfaceDoSistema.LoginSistem())
+        if (true)//InterfaceDoSistema.LoginSistem()
         {
             IA.iBank("O que deseja fazer?");
 

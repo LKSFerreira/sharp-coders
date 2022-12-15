@@ -14,6 +14,7 @@ namespace sistema_bancario
 
                 // Exibe a letra e espera o tempo de saída antes de passar para a próxima
                 Console.Write(letra);
+
                 if (tempoSaida%2==0){
                     tempoSaida = geradorAleatorio.Next(150);
                     Thread.Sleep(tempoSaida);
@@ -21,7 +22,7 @@ namespace sistema_bancario
                 } else {
                     Thread.Sleep(tempoSaida);
                 }
-            }
+            }            
             System.Console.WriteLine();
         }
     }
