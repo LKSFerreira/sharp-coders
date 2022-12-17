@@ -140,7 +140,7 @@ namespace sistema_bancario
 
             IA.iBank("Obrigado, agora digite o nome completo do titular.");
             //string nomeCliente = Console.ReadLine()!.ToUpper().Trim();
-            string nomeCliente = "Lucas Ferreira";
+            string nomeCliente = "Lucas Ferreira".ToUpper();
 
             while (!VerificarNomeCliente(nomeCliente))
             {
@@ -157,8 +157,8 @@ namespace sistema_bancario
             do
             {
                 IA.iBank("digite uma senha com no mínimo 6 caracteres.");
-                //senhaCliente = Console.ReadLine()!;
-                senhaCliente = "123456";
+                senhaCliente = ReadPassword()!;
+
 
                 while (!VerificarSenha(senhaCliente))
                 {
@@ -166,8 +166,8 @@ namespace sistema_bancario
                 }
 
                 IA.iBank("Repita a senha para confirmar.");
-                //confirmaSenha = Console.ReadLine()!;
-                confirmaSenha = "123456";
+                confirmaSenha = ReadPassword()!;
+
 
                 if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem");
 
@@ -189,10 +189,18 @@ namespace sistema_bancario
             ContaCliente contaCliente = new ContaCliente(nomeCliente, cpfCliente, senhaCliente, double.Parse(valorDeposito));
 
 
-            using (System.IO.StreamWriter clientes = new System.IO.StreamWriter(@"./data/clientes.txt", true))
+            StreamWriter clientesStream = new StreamWriter("./data/clientes.txt", true);
+
+            if (clientes.Length > 0)
             {
-                clientes.WriteLineAsync($"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo}");
+                clientesStream.WriteLine();
+                clientesStream.Write($"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}");
             }
+            else
+            {
+                clientesStream.Write($"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}");
+            }
+            clientesStream.Close();
 
             IA.iBank("Abertura de conta realizada com sucesso");
 
@@ -341,6 +349,44 @@ namespace sistema_bancario
                 Thread.Sleep(100 - i * 6);
             }
             Console.ResetColor();
+        }
+
+        public static string ReadPassword()
+        {
+            List<char> senha = new List<char>();
+            while (true)
+            {
+                ConsoleKeyInfo tecla = Console.ReadKey(true);
+
+                if (tecla.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+
+
+                if (tecla.Key == ConsoleKey.Backspace)
+                {
+                    int posicaoX = Console.CursorLeft;
+                    int posicaoY = Console.CursorTop;
+
+
+                    if (senha.Count() > 0)
+                    {
+                        Console.SetCursorPosition(posicaoX - 1, posicaoY);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(posicaoX - 1, posicaoY);
+                        Console.Write("");
+                        senha.RemoveAt(senha.Count() - 1);
+                    }
+                }
+                else
+                {
+                    senha.Add(tecla.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            System.Console.WriteLine();
+            return string.Join("", senha);
         }
     }
 }
