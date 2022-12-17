@@ -5,6 +5,9 @@ namespace sistema_bancario
         private static string[] credenciais = File.ReadAllLines("./data/credenciais.txt");
         private static string[] clientes = File.ReadAllLines("./data/clientes.txt");
 
+        private static void refreshClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
+
+
         public static bool LoginSistem()
         {
             bool usuarioLogado = false;
@@ -50,51 +53,59 @@ namespace sistema_bancario
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
                     IA.iBank("Este CPF já possui uma conta aberta\n");
-
-                    do
-                    {
-                        IA.iBank("O que deseja fazer?\n");
-
-                        System.Console.WriteLine("1 - Abrir uma nova para cliente");
-                        System.Console.WriteLine("2 - Acessar a conta vinculada a este CPF");
-                        System.Console.WriteLine("3 - Voltar ao Menu Inicial");
-                        System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
-
-                        IA.iBank("Digite o número da opção:");
-
-                        switch (Console.ReadLine())
-                        {
-                            case "1":
-                                Console.Clear();
-                                AbrirConta();
-                                break;
-
-                            case "2":
-                                Console.Clear();
-                                //DetalharConta();
-                                break;
-
-                            case "3":
-                                Console.Clear();
-                                SelectMenu(ShowMenu());
-                                break;
-
-                            case "0":
-                                SairSistemaByteBank();
-                                break;
-
-                            default:
-                                Console.Clear();
-                                IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
-                                break;
-                        }
-                    } while (true);
+                    subMenuDaConta();
+                    return;
                 }
             }
             System.Console.WriteLine();
         }
+
+        private static void subMenuDaConta()
+        {
+            do
+            {
+                IA.iBank("O que deseja fazer?\n");
+
+                System.Console.WriteLine("1 - Abrir uma nova para cliente");
+                System.Console.WriteLine("2 - Acessar a conta vinculada a este CPF");
+                System.Console.WriteLine("3 - Voltar ao Menu Inicial");
+                System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
+
+                IA.iBank("Digite o número da opção:");
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        Console.Clear();
+                        AbrirConta();
+                        break;
+
+                    case "2":
+                        Console.Clear();
+                        //DetalharConta();
+                        break;
+
+                    case "3":
+                        Console.Clear();
+                        SelectMenu(ShowMenu());
+                        break;
+
+                    case "0":
+                        SairSistemaByteBank();
+                        break;
+
+                    default:
+                        Console.Clear();
+                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
+                        break;
+                }
+            } while (true);
+        }
+
         public static void MostrarCapitalByteBank()
         {
+            refreshClientes();
+
             double capitalByteBank = 0;
             foreach (var linha in clientes)
             {
@@ -125,6 +136,8 @@ namespace sistema_bancario
 
         public static void AbrirConta()
         {
+            refreshClientes();
+
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
             //string cpfCliente = Console.ReadLine()!;
             string cpfCliente = "39005517824";
@@ -202,8 +215,9 @@ namespace sistema_bancario
             }
             clientesStream.Close();
 
-            IA.iBank("Abertura de conta realizada com sucesso");
+            IA.iBank("Abertura de conta realizada com sucesso\n");
 
+            subMenuDaConta();
         }
 
         private static bool ValidarDeposito(string valorDeposito)
@@ -295,22 +309,24 @@ namespace sistema_bancario
             {
                 case 1:
                     Console.Clear();
-                    System.Console.WriteLine(TitlesMenu.abrirConta);
+                    InterfaceDoSistema.loadTitles(TitlesMenu.novaConta, ConsoleColor.DarkGreen);
                     IA.iBank("OK, vamos abrir uma nova conta\n");
                     AbrirConta();
                     break;
                 case 2:
                     Console.Clear();
-                    System.Console.WriteLine(TitlesMenu.clientes);
+                    loadTitles(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
                     ListAccounts();
                     SelectMenu(ShowMenu());
                     break;
                 case 3:
+                    Console.Clear();
+                    loadTitles(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
                     System.Console.WriteLine("Acessou uma conta");
                     break;
                 case 4:
                     Console.Clear();
-                    System.Console.WriteLine(TitlesMenu.capital);
+                    loadTitles(TitlesMenu.capital, ConsoleColor.DarkYellow);
                     MostrarCapitalByteBank();
                     SelectMenu(ShowMenu());
                     break;
@@ -340,14 +356,21 @@ namespace sistema_bancario
         {
             IA.iBank("Olá, eu sou o iBank, seu assiste virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
 
-            string[] logoString = TitlesMenu.logo.Split(Environment.NewLine);
+            loadTitles(TitlesMenu.logo, ConsoleColor.DarkCyan);
+        }
 
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
+        private static void loadTitles(string title, ConsoleColor color)
+        {
+            string[] logoString = title.Split(Environment.NewLine);
+
+            Console.ForegroundColor = color;
+
             for (int i = 0; i < 8; i++)
             {
                 Console.WriteLine(logoString[i]);
                 Thread.Sleep(100 - i * 6);
             }
+
             Console.ResetColor();
         }
 
@@ -368,7 +391,6 @@ namespace sistema_bancario
                 {
                     int posicaoX = Console.CursorLeft;
                     int posicaoY = Console.CursorTop;
-
 
                     if (senha.Count() > 0)
                     {
