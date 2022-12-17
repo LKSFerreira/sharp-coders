@@ -1,0 +1,5 @@
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\sistema-bancario\bin\Debug\net6.0\publish\sistema-bancario.exe
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\sistema-bancario\bin\Debug\net6.0\publish\sistema-bancario.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\sistema-bancario\bin\Debug\net6.0\publish\sistema-bancario.deps.json
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\sistema-bancario\bin\Debug\net6.0\publish\sistema-bancario.runtimeconfig.json
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\sistema-bancario\bin\Debug\net6.0\publish\sistema-bancario.pdb

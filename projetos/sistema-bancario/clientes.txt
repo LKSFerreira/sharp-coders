@@ -1,4 +1,0 @@
-Fulano de Tal:12345678900:senha123:500.00
-Siclano de Tal:98765432100:123senha:1000.00
-Beltrano de Tal:14785236900:123senha123:250.00
-José Ninguem:36985214700:senha123senha:250.00

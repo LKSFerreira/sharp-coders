@@ -5,15 +5,9 @@ using System.Threading.Tasks;
 
 namespace sistema_bancario
 {
-    public class contaCliente : Conta
+    public class ContaCliente : Conta
     {
-        private double saldo = 0;
-
-        public contaCliente(string titular, string senha, string cpf) : base(titular, senha, cpf)
-        {
-        }
-
-        public contaCliente(string titular, string senha, string cpf, double saldo) : base(titular, senha, cpf, saldo)
+        public ContaCliente(string cpf, string titular, string senha, double saldo) : base(cpf, titular, senha, saldo)
         {
         }
 
@@ -25,14 +19,14 @@ namespace sistema_bancario
             }
             else
             {
-                saldo = valor;
+                this.Saldo = valor;
             }
         }
 
         public void Sacar(double valor)
         {
-            if (saldo > 0 && valor <= saldo){
-                saldo -= valor;
+            if (this.Saldo > 0 && valor <= this.Saldo){
+                this.Saldo -= valor;
             } else {
                 System.Console.WriteLine("Saldo insuficiente");
             }
