@@ -5,7 +5,7 @@ internal class Program
     private static void Main(string[] args)
     {
         //IA.BarraCarregamento();
-        InterfaceDoSistema.CarregarSistema();
+        //InterfaceDoSistema.CarregarSistema();
 
         if (true)//InterfaceDoSistema.AutenticarSistema()
         {
