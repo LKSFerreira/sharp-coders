@@ -5,11 +5,11 @@ internal class Program
     private static void Main(string[] args)
     {
         //IA.BarraCarregamento();
-        InterfaceDoSistema.LoadSistem();
+        InterfaceDoSistema.CarregarSistema();
 
-        if (true)//InterfaceDoSistema.LoginSistem()
+        if (true)//InterfaceDoSistema.AutenticarSistema()
         {
-            InterfaceDoSistema.SelectMenu(InterfaceDoSistema.ShowMenu());
+            InterfaceDoSistema.SelecionarMenu(InterfaceDoSistema.MostrarMenu());
         }
     }
 }

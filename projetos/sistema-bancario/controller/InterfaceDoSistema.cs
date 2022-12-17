@@ -2,13 +2,13 @@ namespace sistema_bancario
 {
     public class InterfaceDoSistema
     {
+        private static string cpfCliente = "";
         private static string[] credenciais = File.ReadAllLines("./data/credenciais.txt");
         private static string[] clientes = File.ReadAllLines("./data/clientes.txt");
+        private static void AtualizarClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
 
-        private static void refreshClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
 
-
-        public static bool LoginSistem()
+        public static bool AutenticarSistema()
         {
             bool usuarioLogado = false;
 
@@ -34,8 +34,11 @@ namespace sistema_bancario
             } while (!usuarioLogado);
             return usuarioLogado;
         }
-        private static void ListAccounts()
+        private static void ListarContas()
         {
+            Console.Clear();
+            MostrarTitulos(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
+
             int idConta = clientes.Length - (clientes.Length - 1);
             foreach (var linha in clientes)
             {
@@ -45,29 +48,41 @@ namespace sistema_bancario
             System.Console.WriteLine();
         }
 
-        private static void VerificarCPF(string cpfCliente)
+        private static bool VerificarCPF(string cpfCliente)
         {
+            bool encontrouCPF = false;
 
             foreach (var linha in clientes)
             {
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
-                    IA.iBank("Este CPF já possui uma conta aberta\n");
-                    subMenuDaConta();
-                    return;
+                    IA.iBank("Olha aqui, encontramos o CPF digitado...\n");
+                    encontrouCPF = true;
+                    MostrarSubMenuAbrirConta();
+                    return encontrouCPF;
                 }
+            }
+            return encontrouCPF;
+        }
+
+        private static void NaoEncontrouCPF(bool encontrouCPF)
+        {
+            if (!encontrouCPF)
+            {
+                IA.iBank("Vixii, não encontramos o CPF digitado, o que você fará?");
+                MostrarSubMenuAbrirConta();
             }
             System.Console.WriteLine();
         }
 
-        private static void subMenuDaConta()
+        private static void MostrarSubMenuAbrirConta()
         {
             do
             {
                 IA.iBank("O que deseja fazer?\n");
 
                 System.Console.WriteLine("1 - Abrir uma nova para cliente");
-                System.Console.WriteLine("2 - Acessar a conta vinculada a este CPF");
+                System.Console.WriteLine("2 - Detalhar conta");
                 System.Console.WriteLine("3 - Voltar ao Menu Inicial");
                 System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
 
@@ -76,18 +91,16 @@ namespace sistema_bancario
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        Console.Clear();
                         AbrirConta();
                         break;
 
                     case "2":
-                        Console.Clear();
-                        //DetalharConta();
+                        DetalharConta();
                         break;
 
                     case "3":
                         Console.Clear();
-                        SelectMenu(ShowMenu());
+                        SelecionarMenu(MostrarMenu());
                         break;
 
                     case "0":
@@ -104,7 +117,10 @@ namespace sistema_bancario
 
         public static void MostrarCapitalByteBank()
         {
-            refreshClientes();
+            Console.Clear();
+            MostrarTitulos(TitlesMenu.capital, ConsoleColor.DarkYellow);
+
+            AtualizarClientes();
 
             double capitalByteBank = 0;
             foreach (var linha in clientes)
@@ -114,8 +130,11 @@ namespace sistema_bancario
             IA.iBank($"Nosso Capital de Giro esta acumulado em {capitalByteBank:C2}\n");
         }
 
-        public static int ShowMenu()
+        public static int MostrarMenu()
         {
+
+            MostrarTitulos(TitlesMenu.opcaoMenu, ConsoleColor.White);
+
             IA.iBank("O que deseja fazer?\n");
 
             System.Console.WriteLine("1 - Abrir uma nova conta para cliente");
@@ -136,20 +155,20 @@ namespace sistema_bancario
 
         public static void AbrirConta()
         {
-            refreshClientes();
+            Console.Clear();
+            InterfaceDoSistema.MostrarTitulos(TitlesMenu.novaConta, ConsoleColor.DarkGreen);
+
+            IA.iBank("OK, vamos abrir uma nova conta\n");
+
+            AtualizarClientes();
 
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
             //string cpfCliente = Console.ReadLine()!;
-            string cpfCliente = "39005517824";
-
+            cpfCliente = "39005517824";
+            
             VerificarCPF(cpfCliente);
 
-            while (!IsCPF(cpfCliente))
-            {
-                IA.iBank("Humm, CPF inválido, por favor digite um CPF real.");
-                cpfCliente = Console.ReadLine()!;
-                VerificarCPF(cpfCliente);
-            }
+            cpfCliente = ValidarCPF(cpfCliente);
 
             IA.iBank("Obrigado, agora digite o nome completo do titular.");
             //string nomeCliente = Console.ReadLine()!.ToUpper().Trim();
@@ -170,7 +189,7 @@ namespace sistema_bancario
             do
             {
                 IA.iBank("digite uma senha com no mínimo 6 caracteres.");
-                senhaCliente = ReadPassword()!;
+                senhaCliente = LerSenha()!;
 
 
                 while (!VerificarSenha(senhaCliente))
@@ -179,8 +198,7 @@ namespace sistema_bancario
                 }
 
                 IA.iBank("Repita a senha para confirmar.");
-                confirmaSenha = ReadPassword()!;
-
+                confirmaSenha = LerSenha()!;
 
                 if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem");
 
@@ -192,7 +210,6 @@ namespace sistema_bancario
             //string valorDeposito = Console.ReadLine()!;
             string valorDeposito = "3500,00";
 
-
             while (!ValidarDeposito(valorDeposito))
             {
                 IA.iBank("Eita, alguma coisa deu errado, digite um valor válido.");
@@ -200,7 +217,6 @@ namespace sistema_bancario
             }
 
             ContaCliente contaCliente = new ContaCliente(nomeCliente, cpfCliente, senhaCliente, double.Parse(valorDeposito));
-
 
             StreamWriter clientesStream = new StreamWriter("./data/clientes.txt", true);
 
@@ -217,7 +233,18 @@ namespace sistema_bancario
 
             IA.iBank("Abertura de conta realizada com sucesso\n");
 
-            subMenuDaConta();
+            MostrarSubMenuAbrirConta();
+        }
+
+        private static string ValidarCPF(string cpfCliente)
+        {
+            while (!IsCPF(cpfCliente))
+            {
+                IA.iBank("Humm, CPF inválido, por favor digite um CPF real.");
+                cpfCliente = Console.ReadLine()!;
+            }
+
+            return cpfCliente;
         }
 
         private static bool ValidarDeposito(string valorDeposito)
@@ -303,32 +330,23 @@ namespace sistema_bancario
             return true;
         }
 
-        public static void SelectMenu(int opcaoMenu)
+        public static void SelecionarMenu(int opcaoMenu)
         {
             switch (opcaoMenu)
             {
                 case 1:
-                    Console.Clear();
-                    InterfaceDoSistema.loadTitles(TitlesMenu.novaConta, ConsoleColor.DarkGreen);
-                    IA.iBank("OK, vamos abrir uma nova conta\n");
                     AbrirConta();
                     break;
                 case 2:
-                    Console.Clear();
-                    loadTitles(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
-                    ListAccounts();
-                    SelectMenu(ShowMenu());
+                    ListarContas();
+                    SelecionarMenu(MostrarMenu());
                     break;
                 case 3:
-                    Console.Clear();
-                    loadTitles(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
-                    System.Console.WriteLine("Acessou uma conta");
+                    DetalharConta();
                     break;
                 case 4:
-                    Console.Clear();
-                    loadTitles(TitlesMenu.capital, ConsoleColor.DarkYellow);
                     MostrarCapitalByteBank();
-                    SelectMenu(ShowMenu());
+                    SelecionarMenu(MostrarMenu());
                     break;
                 case 5:
                     System.Console.WriteLine("Realizou uma operacao");
@@ -339,27 +357,31 @@ namespace sistema_bancario
                 default:
                     Console.Clear();
                     IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.\n");
-                    SelectMenu(ShowMenu());
+                    SelecionarMenu(MostrarMenu());
                     break;
             }
         }
 
         private static void SairSistemaByteBank()
         {
-            IA.iBank("Obrigado por utlizar nossos serviços");
-            System.Console.WriteLine(TitlesMenu.logo);
+            Console.Clear();
+
+            IA.iBank("Obrigado por utilizar nossos serviços.");
+
+            MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
+
             Thread.Sleep(1500);
             Environment.Exit(0);
         }
 
-        public static void LoadSistem()
+        public static void CarregarSistema()
         {
             IA.iBank("Olá, eu sou o iBank, seu assiste virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
 
-            loadTitles(TitlesMenu.logo, ConsoleColor.DarkCyan);
+            MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
         }
 
-        private static void loadTitles(string title, ConsoleColor color)
+        private static void MostrarTitulos(string title, ConsoleColor color)
         {
             string[] logoString = title.Split(Environment.NewLine);
 
@@ -374,7 +396,7 @@ namespace sistema_bancario
             Console.ResetColor();
         }
 
-        public static string ReadPassword()
+        public static string LerSenha()
         {
             List<char> senha = new List<char>();
             while (true)
@@ -385,7 +407,6 @@ namespace sistema_bancario
                 {
                     break;
                 }
-
 
                 if (tecla.Key == ConsoleKey.Backspace)
                 {
@@ -409,6 +430,26 @@ namespace sistema_bancario
             }
             System.Console.WriteLine();
             return string.Join("", senha);
+        }
+
+        private static void DetalharConta()
+        {
+            Console.Clear();
+            AtualizarClientes();
+
+            IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
+            cpfCliente = Console.ReadLine()!;
+            //cpfCliente = ValidarCPF(cpfCliente);
+
+            if (!VerificarCPF(cpfCliente))
+            {   
+                Console.Clear();
+                IA.iBank("Vixii, não encontramos o CPF digitado...");
+                MostrarSubMenuAbrirConta();
+            }
+
+            MostrarTitulos(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
+
         }
     }
 }
