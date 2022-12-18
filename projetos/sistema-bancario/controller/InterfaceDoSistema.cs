@@ -3,7 +3,7 @@ namespace sistema_bancario
     public class InterfaceDoSistema
     {
         private static string cpfCliente = "";
-        private static bool encontrouCPF = false;
+        private static bool acessouDetalhesDaConta = false;
         private static string[] credenciais = File.ReadAllLines("./data/credenciais.txt");
         private static string[] clientes = File.ReadAllLines("./data/clientes.txt");
         private static void AtualizarClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
@@ -55,11 +55,11 @@ namespace sistema_bancario
             {
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
-                    IA.iBank("Olha aqui, encontramos o CPF digitado...\n");
+                    IA.iBank("Olha aqui... Encontrei o CPF digitado...\n");
                     
-                    if (encontrouCPF)
+                    if (acessouDetalhesDaConta)
                     {
-                        return encontrouCPF;
+                        return acessouDetalhesDaConta;
                     }
                     else
                     {
@@ -117,7 +117,7 @@ namespace sistema_bancario
                         IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
                         break;
                 }
-            } while (true);
+            } while (!acessouDetalhesDaConta);
         }
 
         public static void MostrarCapitalByteBank()
@@ -162,7 +162,7 @@ namespace sistema_bancario
         {
             Console.Clear();
             InterfaceDoSistema.MostrarTitulos(TitlesMenu.novaConta, ConsoleColor.DarkGreen);
-            encontrouCPF = false;
+            acessouDetalhesDaConta = false;
 
             IA.iBank("OK, vamos abrir uma nova conta\n");
 
@@ -173,7 +173,9 @@ namespace sistema_bancario
             cpfCliente = "39005517824";
 
             if (!VerificarCPF(cpfCliente))
-            {
+            {   
+                if (acessouDetalhesDaConta) return;
+
                 cpfCliente = ValidarCPF(cpfCliente);
 
                 IA.iBank("Obrigado, agora digite o nome completo do titular.");
@@ -181,7 +183,7 @@ namespace sistema_bancario
                 string nomeCliente = "Lucas Ferreira".ToUpper();
 
                 while (!VerificarNomeCliente(nomeCliente))
-                {
+                {   
                     IA.iBank("Eii, isso não me parece um nome válido, por gentileza digite seu nome de verdade por completo.");
                     nomeCliente = Console.ReadLine()!.ToUpper();
                 }
@@ -443,7 +445,7 @@ namespace sistema_bancario
         {
             Console.Clear();
             AtualizarClientes();
-            encontrouCPF = true;
+            acessouDetalhesDaConta = true;
 
             IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
 
@@ -457,7 +459,6 @@ namespace sistema_bancario
             }
 
             MostrarTitulos(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
-
         }
     }
 }
