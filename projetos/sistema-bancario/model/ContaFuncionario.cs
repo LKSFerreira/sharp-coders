@@ -4,7 +4,7 @@ namespace sistema_bancario
     {
         protected ContaFuncionario(string titular, string senha, string cpf, double saldo) : base(titular, senha, cpf, saldo)
         {
-            
+
         }
     }
 }

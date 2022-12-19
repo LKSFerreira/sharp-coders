@@ -4,6 +4,7 @@ namespace sistema_bancario
     {
         private static string cpfCliente = "";
         private static bool acessouDetalhesDaConta = false;
+        private static bool acessouTransferenciaPix = false;
         private static string[] credenciais = File.ReadAllLines("./data/credenciais.txt");
         private static string[] clientes = File.ReadAllLines("./data/clientes.txt");
         private static void AtualizarClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
@@ -18,20 +19,18 @@ namespace sistema_bancario
                 IA.iBank("Por gentileza, digite seu usuário:");
                 var usuario = Console.ReadLine()!;
                 IA.iBank("Agora digite a senha por favor:");
-                var senha = Console.ReadLine()!;
-
-                IA.BarraCarregamento();
+                var senha = LerSenha()!;
 
                 foreach (var linha in credenciais)
                 {
                     if (usuario == linha.Split(':')[0] && senha == linha.Split(':')[1])
                     {
-                        IA.iBank("Acesso Permitido");
+                        IA.iBank("Acesso Permitido", ConsoleColor.Green);
                         usuarioLogado = true;
                         break;
                     }
                 }
-                if (!usuarioLogado) IA.iBank("Usuário ou Senha inválido");
+                if (!usuarioLogado) IA.iBank("Usuário ou Senha inválido", ConsoleColor.Red);
             } while (!usuarioLogado);
             return usuarioLogado;
         }
@@ -49,11 +48,18 @@ namespace sistema_bancario
             System.Console.WriteLine();
         }
 
+
+
         private static ContaCliente ListarContas(string cpfCliente)
         {
             Console.Clear();
             MostrarTitulos(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
 
+            return BuscarCliente(cpfCliente);
+        }
+
+        private static ContaCliente BuscarCliente(string cpfCliente)
+        {
             int idConta = 1;
 
             foreach (var linha in clientes)
@@ -64,15 +70,26 @@ namespace sistema_bancario
                     var CPF = linha.Split(':')[1];
                     var senhaCliente = linha.Split(":")[2];
                     double saldo = double.Parse(linha.Split(":")[3]);
-                    System.Console.WriteLine($"ID: {idConta} | Titular: {nomeCliente} | CPF: {CPF} | Saldo: {saldo:C2}");
-                    ContaCliente contaCliente = new ContaCliente(CPF, nomeCliente, senhaCliente, saldo);
-                    System.Console.WriteLine();
-                    return contaCliente;
+
+                    if (acessouTransferenciaPix)
+                    {
+                        System.Console.WriteLine($"Titular: {nomeCliente} | CPF: {CPF}");
+                        ContaCliente contaCliente = new ContaCliente(nomeCliente, CPF, senhaCliente, saldo);
+                        return contaCliente;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine($"ID: {idConta} | Titular: {nomeCliente} | CPF: {CPF} | Saldo: {saldo:C2}");
+                        ContaCliente contaCliente = new ContaCliente(nomeCliente, CPF, senhaCliente, saldo);
+                        System.Console.WriteLine();
+                        return contaCliente;
+                    }
+
                 }
                 idConta++;
             }
             System.Console.WriteLine();
-            return null;
+            return null!;
         }
 
         private static bool VerificarCPF(string cpfCliente)
@@ -102,7 +119,7 @@ namespace sistema_bancario
         {
             if (!encontrouCPF)
             {
-                IA.iBank("Vixii, não encontramos o CPF digitado, o que você fará?");
+                IA.iBank("Vixii, não encontramos o CPF digitado, o que você fará?", ConsoleColor.Red);
                 MostrarSubMenuAbrirConta();
             }
             System.Console.WriteLine();
@@ -142,7 +159,7 @@ namespace sistema_bancario
 
                     default:
                         Console.Clear();
-                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
+                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.", ConsoleColor.Red);
                         break;
                 }
             } while (!acessouDetalhesDaConta);
@@ -197,9 +214,8 @@ namespace sistema_bancario
             AtualizarClientes();
 
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
-            //string cpfCliente = Console.ReadLine()!;
-            cpfCliente = "39005517824";
-
+            string cpfCliente = Console.ReadLine()!;
+            
             if (!VerificarCPF(cpfCliente))
             {
                 if (acessouDetalhesDaConta) return;
@@ -207,48 +223,46 @@ namespace sistema_bancario
                 cpfCliente = ValidarCPF(cpfCliente);
 
                 IA.iBank("Obrigado, agora digite o nome completo do titular.");
-                //string nomeCliente = Console.ReadLine()!.ToUpper().Trim();
-                string nomeCliente = "Lucas Ferreira".ToUpper();
-
+                string nomeCliente = Console.ReadLine()!.ToUpper().Trim();
+                
                 while (!VerificarNomeCliente(nomeCliente))
                 {
-                    IA.iBank("Eii, isso não me parece um nome válido, por gentileza digite seu nome de verdade por completo.");
+                    IA.iBank("Eii, isso não me parece um nome válido, por gentileza digite seu nome de verdade por completo.", ConsoleColor.Red);
                     nomeCliente = Console.ReadLine()!.ToUpper();
                 }
                 System.Console.WriteLine();
 
                 IA.iBank("Muito bom!! xD, e para finalizar...");
 
-                string senhaCliente = "123456";
-                string confirmaSenha = "123456";
+                string senhaCliente = "";
+                string confirmaSenha = "";
 
                 do
                 {
                     IA.iBank("digite uma senha com no mínimo 6 caracteres.");
-                    //senhaCliente = LerSenha()!;
+                    senhaCliente = LerSenha()!;
 
 
                     while (!VerificarSenha(senhaCliente))
                     {
-                        IA.iBank("Opa, por questões de segurança é melhor adicionrmos outra senha:");
+                        IA.iBank("Opa, por questões de segurança é melhor adicionarmos outra senha:", ConsoleColor.Red);
                     }
 
                     IA.iBank("Repita a senha para confirmar.");
-                    //confirmaSenha = LerSenha()!;
+                    confirmaSenha = LerSenha()!;
 
-                    if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem");
+                    if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem", ConsoleColor.Magenta);
 
                 } while (senhaCliente != confirmaSenha);
 
                 System.Console.WriteLine();
 
                 IA.iBank("Digite o valor do seu primeiro depósito, caso não queira digite 0");
-                //string valorDeposito = Console.ReadLine()!;
-                string valorDeposito = "3500,00";
+                string valorDeposito = Console.ReadLine()!;
 
                 while (!ValidarDeposito(valorDeposito))
                 {
-                    IA.iBank("Eita, alguma coisa deu errado, digite um valor válido.");
+                    IA.iBank("Eita, alguma coisa deu errado, digite um valor válido.", ConsoleColor.DarkRed);
                     valorDeposito = Console.ReadLine()!;
                 }
 
@@ -267,7 +281,7 @@ namespace sistema_bancario
                 }
                 clientesStream.Close();
 
-                IA.iBank("Abertura de conta realizada com sucesso\n");
+                IA.iBank("Abertura de conta realizada com sucesso\n", ConsoleColor.Green);
 
                 MostrarSubMenuAbrirConta();
             }
@@ -277,7 +291,7 @@ namespace sistema_bancario
         {
             while (!IsCPF(cpfCliente))
             {
-                IA.iBank("Humm, CPF inválido, por favor digite um CPF real.");
+                IA.iBank("Humm, CPF inválido, por favor digite um CPF real.", ConsoleColor.Red);
                 cpfCliente = Console.ReadLine()!;
             }
 
@@ -393,7 +407,7 @@ namespace sistema_bancario
                     break;
                 default:
                     Console.Clear();
-                    IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.\n");
+                    IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.\n", ConsoleColor.Red);
                     SelecionarMenu(MostrarMenu());
                     break;
             }
@@ -403,7 +417,7 @@ namespace sistema_bancario
         {
             Console.Clear();
 
-            IA.iBank("Obrigado por utilizar nossos serviços.");
+            IA.iBank("Obrigado por utilizar nossos serviços.", ConsoleColor.Magenta);
 
             MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
 
@@ -414,7 +428,6 @@ namespace sistema_bancario
         public static void CarregarSistema()
         {
             IA.iBank("Olá, eu sou o iBank, seu assiste virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
-
             MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
         }
 
@@ -477,21 +490,21 @@ namespace sistema_bancario
 
             IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
 
-            //cpfCliente = ValidarCPF(Console.ReadLine()!);
-            cpfCliente = "39005517824";
+            cpfCliente = ValidarCPF(Console.ReadLine()!);
+
             if (!VerificarCPF(cpfCliente))
             {
                 Console.Clear();
-                IA.iBank("Vixii, não encontramos o CPF digitado...");
+                IA.iBank("Vixii, não encontramos o CPF digitado...", ConsoleColor.Red);
                 MostrarSubMenuAbrirConta();
             }
             var contaCliente = ListarContas(cpfCliente);
             MostrarSubMenuContaDetalhada(contaCliente);
+            AtualizarConta(contaCliente);
         }
 
         private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
         {
-
             do
             {
                 IA.iBank("O que deseja fazer?\n");
@@ -508,17 +521,21 @@ namespace sistema_bancario
                 {
                     case "1":
                         IA.iBank("Sacar uma quantia, entendi, para isso digite um valor:");
-                        //contaCliente.Sacar(double.Parse(Console.ReadLine()!));
+                        contaCliente.Sacar(double.Parse(Console.ReadLine()!));
+                        IA.BarraCarregamento(200);
+                        IA.iBank("Saque efetuado com sucesso !!\n", ConsoleColor.Green);
                         break;
 
                     case "2":
                         IA.iBank("Perfeito, qual o valor deseja depositar?");
-                        //contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                        contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                        IA.BarraCarregamento(200);
+                        IA.iBank("Depósito realizado com sucesso !!\n", ConsoleColor.Green);
                         break;
 
                     case "3":
-                        IA.iBank("Muito bom, para realizar um pix preciso de algumas informações?");
-                        //contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                        IA.iBank("Muito bom, para realizar um pix preciso de algumas informações...");
+                        TranferirViaPix(contaCliente);
                         break;
 
                     case "4":
@@ -532,10 +549,125 @@ namespace sistema_bancario
 
                     default:
                         Console.Clear();
-                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
+                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.\n", ConsoleColor.Red);
                         break;
                 }
             } while (!acessouDetalhesDaConta);
         }
+
+        private static void TranferirViaPix(ContaCliente contaCliente)
+        {
+            AtualizarClientes();
+            acessouTransferenciaPix = true;
+
+            IA.iBank("Digite o CPF do beneficiado");
+            string cpfBeneficiado = ValidarCPF(Console.ReadLine()!);
+            ContaCliente contaBeneficiado = BuscarCliente(cpfBeneficiado);
+
+            if (!VerificarCPF(cpfBeneficiado))
+            {
+                Console.Clear();
+                do
+                {
+                    IA.iBank("Vixii, não encontramos o CPF digitado...\n", ConsoleColor.Red);
+                    System.Console.WriteLine("1 - Tentar transferência em outra conta");
+                    System.Console.WriteLine("2 - Voltar ao menu da sua conta");
+                    System.Console.WriteLine("0 - Sair do Sistema ByteBank");
+
+                    switch (Console.ReadLine())
+                    {
+                        case "1":
+                            TranferirViaPix(contaCliente);
+                            break;
+
+                        case "2":
+                            MostrarSubMenuContaDetalhada(contaCliente);
+                            break;
+
+                        case "0":
+                            SairSistemaByteBank();
+                            break;
+
+                        default:
+                            IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.", ConsoleColor.Red);
+                            acessouDetalhesDaConta = false;
+                            break;
+                    }
+                } while (!acessouDetalhesDaConta);
+            }
+
+            IA.iBank("Digite o valor da transferência");
+            string valorTransferencia = Console.ReadLine()!;
+            double valorTransferido = 0;
+
+            while (!double.TryParse(valorTransferencia, out valorTransferido))
+            {
+                IA.iBank("Alguma coisa de errada, não esta certo, por gentileza, digite um valor válido ou 0 para cancelar", ConsoleColor.Red);
+
+                if (valorTransferido == 0)
+                {
+                    MostrarMenu();
+                }
+            }
+
+            contaCliente.Sacar(valorTransferido);
+            AtualizarConta(contaCliente);
+            contaBeneficiado.Depositar(valorTransferido);
+            AtualizarConta(contaBeneficiado);
+
+            IA.BarraCarregamento(100);
+
+            IA.iBank("Tranferência Realizada com sucesso", ConsoleColor.Green);
+            MostrarSubMenuContaDetalhada(contaCliente);
+        }
+
+        private static void AtualizarConta(ContaCliente contaCliente)
+        {
+
+            // String na qual faremos a verificação das linhas do registro
+            string? registro = "";
+
+            // Criação dos objeto que iremos manipular
+            StreamReader clientesRegistrado = new StreamReader("./data/clientes.txt");
+            StreamWriter clientesAtualizado = new StreamWriter("./data/temporario.txt");
+
+            // Enquanto ouver linhas para ler no clientesRegistrado ele efetuara o loop
+            while ((registro = clientesRegistrado.ReadLine()) != null)
+            {
+
+                // Se linha do registro conter o CPF do cliente
+                if (registro.Contains(contaCliente.Cpf))
+                {
+                    // Reescrevera o registro
+                    registro = $"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}";
+                }
+
+                // Continua reescrevendo os registro que não foram alterados
+                if (clientesRegistrado.EndOfStream)
+                {
+                    clientesAtualizado.Write(registro);
+                }
+                else
+                {
+                    clientesAtualizado.WriteLine(registro);
+                }
+
+            }
+            // Salva os arquivos
+            clientesAtualizado.Close();
+            clientesRegistrado.Close();
+
+            // Exclui o registro antigo
+            File.Delete("./data/clientes.txt");
+
+            // Renomeia o arquivo temporario
+            File.Move("./data/temporario.txt", "./data/clientes.txt");
+
+            //Remove a ultima linha            
+            AtualizarClientes();
+
+            MostrarSubMenuContaDetalhada(contaCliente);
+        }
+
     }
 }

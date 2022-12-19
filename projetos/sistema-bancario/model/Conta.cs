@@ -19,8 +19,5 @@ namespace sistema_bancario
         public string Senha { get => senha; set => senha = value; }
         public string Cpf { get => cpf; set => cpf = value; }
         public double Saldo { get => saldo; set => saldo = value; }
-
-
-
     }
 }
