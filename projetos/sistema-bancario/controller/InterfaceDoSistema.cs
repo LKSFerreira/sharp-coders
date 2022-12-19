@@ -43,20 +43,48 @@ namespace sistema_bancario
             int idConta = clientes.Length - (clientes.Length - 1);
             foreach (var linha in clientes)
             {
-                System.Console.WriteLine($"ID: {idConta} | Titular: {linha.Split(':')[0]} | CPF: {linha.Split(':')[1]} | Saldo: {linha.Split(':')[3]}");
+                System.Console.WriteLine($"ID: {idConta} | Titular: {linha.Split(':')[0]} | CPF: {linha.Split(':')[1]} | Saldo: {linha.Split(':')[3]:C2}");
                 idConta++;
             }
             System.Console.WriteLine();
         }
 
+        private static ContaCliente ListarContas(string cpfCliente)
+        {
+            Console.Clear();
+            MostrarTitulos(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
+
+            int idConta = 1;
+
+            foreach (var linha in clientes)
+            {
+                if (linha.Contains(cpfCliente))
+                {
+                    var nomeCliente = linha.Split(':')[0];
+                    var CPF = linha.Split(':')[1];
+                    var senhaCliente = linha.Split(":")[2];
+                    double saldo = double.Parse(linha.Split(":")[3]);
+                    System.Console.WriteLine($"ID: {idConta} | Titular: {nomeCliente} | CPF: {CPF} | Saldo: {saldo:C2}");
+                    ContaCliente contaCliente = new ContaCliente(CPF, nomeCliente, senhaCliente, saldo);
+                    System.Console.WriteLine();
+                    return contaCliente;
+                }
+                idConta++;
+            }
+            System.Console.WriteLine();
+            return null;
+        }
+
         private static bool VerificarCPF(string cpfCliente)
         {
+            cpfCliente = ValidarCPF(cpfCliente);
+
             foreach (var linha in clientes)
             {
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
                     IA.iBank("Olha aqui... Encontrei o CPF digitado...\n");
-                    
+
                     if (acessouDetalhesDaConta)
                     {
                         return acessouDetalhesDaConta;
@@ -173,7 +201,7 @@ namespace sistema_bancario
             cpfCliente = "39005517824";
 
             if (!VerificarCPF(cpfCliente))
-            {   
+            {
                 if (acessouDetalhesDaConta) return;
 
                 cpfCliente = ValidarCPF(cpfCliente);
@@ -183,7 +211,7 @@ namespace sistema_bancario
                 string nomeCliente = "Lucas Ferreira".ToUpper();
 
                 while (!VerificarNomeCliente(nomeCliente))
-                {   
+                {
                     IA.iBank("Eii, isso não me parece um nome válido, por gentileza digite seu nome de verdade por completo.");
                     nomeCliente = Console.ReadLine()!.ToUpper();
                 }
@@ -449,16 +477,65 @@ namespace sistema_bancario
 
             IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
 
-            cpfCliente = ValidarCPF(Console.ReadLine()!);
-
+            //cpfCliente = ValidarCPF(Console.ReadLine()!);
+            cpfCliente = "39005517824";
             if (!VerificarCPF(cpfCliente))
             {
                 Console.Clear();
                 IA.iBank("Vixii, não encontramos o CPF digitado...");
                 MostrarSubMenuAbrirConta();
             }
+            var contaCliente = ListarContas(cpfCliente);
+            MostrarSubMenuContaDetalhada(contaCliente);
+        }
 
-            MostrarTitulos(TitlesMenu.detalhesDaConta, ConsoleColor.DarkBlue);
+        private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
+        {
+
+            do
+            {
+                IA.iBank("O que deseja fazer?\n");
+
+                System.Console.WriteLine("1 - Sacar");
+                System.Console.WriteLine("2 - Depositar");
+                System.Console.WriteLine("3 - Transferir via Pix");
+                System.Console.WriteLine("4 - Voltar ao Menu Inicial");
+                System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
+
+                IA.iBank("Digite o número da opção:");
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        IA.iBank("Sacar uma quantia, entendi, para isso digite um valor:");
+                        //contaCliente.Sacar(double.Parse(Console.ReadLine()!));
+                        break;
+
+                    case "2":
+                        IA.iBank("Perfeito, qual o valor deseja depositar?");
+                        //contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                        break;
+
+                    case "3":
+                        IA.iBank("Muito bom, para realizar um pix preciso de algumas informações?");
+                        //contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                        break;
+
+                    case "4":
+                        Console.Clear();
+                        SelecionarMenu(MostrarMenu());
+                        break;
+
+                    case "0":
+                        SairSistemaByteBank();
+                        break;
+
+                    default:
+                        Console.Clear();
+                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.");
+                        break;
+                }
+            } while (!acessouDetalhesDaConta);
         }
     }
 }
