@@ -41,15 +41,21 @@ namespace sistema_bancario
             MostrarTitulos(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
 
             int idConta = clientes.Length - (clientes.Length - 1);
+            string titular = "", cpf = "", senha = ""; double saldo = 0;
+
             foreach (var linha in clientes)
-            {
-                System.Console.WriteLine($"ID: {idConta} | Titular: {linha.Split(':')[0]} | CPF: {linha.Split(':')[1]} | Saldo: {linha.Split(':')[3]:C2}");
+            {   
+                titular  = linha.Split(':')[0];
+                cpf = linha.Split(':')[1];
+                senha = linha.Split(':')[2];
+                saldo = double.Parse(linha.Split(':')[3]);
+
+                ContaCliente contaCliente = new ContaCliente(titular, cpf, senha, saldo);
+                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} | CPF: {contaCliente.Cpf} | Saldo: {contaCliente.Saldo:C2}");
                 idConta++;
             }
             System.Console.WriteLine();
         }
-
-
 
         private static ContaCliente ListarContas(string cpfCliente)
         {
@@ -101,7 +107,7 @@ namespace sistema_bancario
             {
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
-                    IA.iBank("Olha aqui... Encontrei o CPF digitado...\n");
+                    IA.iBank("... Encontrei o CPF digitado...\n");
 
                     if (acessouDetalhesDaConta)
                     {

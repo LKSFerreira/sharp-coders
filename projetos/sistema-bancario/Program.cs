@@ -5,9 +5,9 @@ internal class Program
     private static void Main(string[] args)
     {
         
-        InterfaceDoSistema.CarregarSistema();
+        //InterfaceDoSistema.CarregarSistema();
 
-        if (InterfaceDoSistema.AutenticarSistema())
+        if (true) // InterfaceDoSistema.AutenticarSistema()
         {
             InterfaceDoSistema.SelecionarMenu(InterfaceDoSistema.MostrarMenu());
         }
