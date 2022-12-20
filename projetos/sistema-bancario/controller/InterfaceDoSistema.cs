@@ -44,8 +44,8 @@ namespace sistema_bancario
             string titular = "", cpf = "", senha = ""; double saldo = 0;
 
             foreach (var linha in clientes)
-            {   
-                titular  = linha.Split(':')[0];
+            {
+                titular = linha.Split(':')[0];
                 cpf = linha.Split(':')[1];
                 senha = linha.Split(':')[2];
                 saldo = double.Parse(linha.Split(':')[3]);
@@ -108,7 +108,7 @@ namespace sistema_bancario
                 if (linha.Split(':')[1].Equals(cpfCliente))
                 {
                     IA.iBank("... Encontrei o CPF digitado...\n");
-
+                    Thread.Sleep(1000);
                     if (acessouDetalhesDaConta)
                     {
                         return acessouDetalhesDaConta;
@@ -198,7 +198,6 @@ namespace sistema_bancario
             System.Console.WriteLine("2 - Listar todas as contas registradas");
             System.Console.WriteLine("3 - Acessar uma conta");
             System.Console.WriteLine("4 - Consultar Capital de Giro do ByteBank");
-            System.Console.WriteLine("5 - Realizar uma operação de Saque/Deposito ou Transferência");
             System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
 
             IA.iBank("Digite o número da opção:");
@@ -241,8 +240,8 @@ namespace sistema_bancario
 
                 IA.iBank("Muito bom!! xD, e para finalizar...");
 
-                string senhaCliente = validarSenha();;
-            
+                string senhaCliente = validarSenha(); ;
+
                 System.Console.WriteLine();
 
                 IA.iBank("Digite o valor do seu primeiro depósito, caso não queira digite 0");
@@ -276,27 +275,27 @@ namespace sistema_bancario
         }
 
         private static string validarSenha()
-        {   
+        {
             string senhaCliente = "";
             string confirmaSenha = "";
 
             do
+            {
+                IA.iBank("digite uma senha com no mínimo 6 caracteres.");
+                senhaCliente = LerSenha()!;
+
+                while (!VerificarSenha(senhaCliente))
                 {
-                    IA.iBank("digite uma senha com no mínimo 6 caracteres.");
+                    IA.iBank("Opa, por questões de segurança é melhor adicionarmos outra senha:", ConsoleColor.Red);
                     senhaCliente = LerSenha()!;
+                }
 
-                    while (!VerificarSenha(senhaCliente))
-                    {
-                        IA.iBank("Opa, por questões de segurança é melhor adicionarmos outra senha:", ConsoleColor.Red);
-                        senhaCliente = LerSenha()!;
-                    }
+                IA.iBank("Repita a senha para confirmar.");
+                confirmaSenha = LerSenha()!;
 
-                    IA.iBank("Repita a senha para confirmar.");
-                    confirmaSenha = LerSenha()!;
+                if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem", ConsoleColor.Magenta);
 
-                    if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem", ConsoleColor.Magenta);
-
-                } while (senhaCliente != confirmaSenha);
+            } while (senhaCliente != confirmaSenha);
             return senhaCliente;
         }
 
@@ -412,9 +411,6 @@ namespace sistema_bancario
                     MostrarCapitalByteBank();
                     SelecionarMenu(MostrarMenu());
                     break;
-                case 5:
-                    System.Console.WriteLine("Realizou uma operacao");
-                    break;
                 case 0:
                     SairSistemaByteBank();
                     break;
@@ -513,7 +509,6 @@ namespace sistema_bancario
             }
             var contaCliente = ListarContas(cpfCliente);
             MostrarSubMenuContaDetalhada(contaCliente);
-            AtualizarConta(contaCliente);
         }
 
         private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
@@ -533,22 +528,15 @@ namespace sistema_bancario
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        IA.iBank("Sacar uma quantia, entendi, para isso digite um valor:");
-                        contaCliente.Sacar(double.Parse(Console.ReadLine()!));
-                        IA.BarraCarregamento(200);
-                        IA.iBank("Saque efetuado com sucesso !!\n", ConsoleColor.Green);
+                        AtualizarConta(contaCliente, 1);
                         break;
 
                     case "2":
-                        IA.iBank("Perfeito, qual o valor deseja depositar?");
-                        contaCliente.Depositar(double.Parse(Console.ReadLine()!));
-                        IA.BarraCarregamento(200);
-                        IA.iBank("Depósito realizado com sucesso !!\n", ConsoleColor.Green);
+                        AtualizarConta(contaCliente, 2);
                         break;
 
                     case "3":
-                        IA.iBank("Muito bom, para realizar um pix preciso de algumas informações...");
-                        TranferirViaPix(contaCliente);
+                        AtualizarConta(contaCliente, 3);
                         break;
 
                     case "4":
@@ -624,9 +612,9 @@ namespace sistema_bancario
             }
 
             contaCliente.Sacar(valorTransferido);
-            AtualizarConta(contaCliente);
+            AtualizarConta(contaCliente, 1);
             contaBeneficiado.Depositar(valorTransferido);
-            AtualizarConta(contaBeneficiado);
+            AtualizarConta(contaBeneficiado, 2);
 
             IA.BarraCarregamento(100);
 
@@ -635,51 +623,101 @@ namespace sistema_bancario
             return;
         }
 
-        private static void AtualizarConta(ContaCliente contaCliente)
+        private static void AtualizarConta(ContaCliente contaCliente, byte operacao)
         {
+            string senhaCliente = "";
 
-            // String na qual faremos a verificação das linhas do registro
-            string? registro = "";
-
-            // Criação dos objeto que iremos manipular
-            StreamReader clientesRegistrado = new StreamReader("./data/clientes.txt");
-            StreamWriter clientesAtualizado = new StreamWriter("./data/temporario.txt");
-
-            // Enquanto ouver linhas para ler no clientesRegistrado ele efetuara o loop
-            while ((registro = clientesRegistrado.ReadLine()) != null)
+            switch (operacao)
             {
+                case 1:
+                    IA.iBank("Sacar uma quantia, entendi, para isso digite um valor:");
+                    contaCliente.Sacar(double.Parse(Console.ReadLine()!));
 
-                // Se linha do registro conter o CPF do cliente
-                if (registro.Contains(contaCliente.Cpf))
-                {
-                    // Reescrevera o registro
-                    registro = $"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}";
-                }
+                    IA.iBank("Digite a senha para finalizar a operação");
+                    senhaCliente = Console.ReadLine()!;
+                    break;
 
-                // Continua reescrevendo os registro que não foram alterados
-                if (clientesRegistrado.EndOfStream)
-                {
-                    clientesAtualizado.Write(registro);
-                }
-                else
-                {
-                    clientesAtualizado.WriteLine(registro);
-                }
+                case 2:
+                    IA.iBank("Perfeito, qual o valor deseja depositar?");
+                    contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                    break;
 
+                case 3:
+                    IA.iBank("Muito bom, para realizar um pix preciso de algumas informações...");
+                    TranferirViaPix(contaCliente);
+                    break;
             }
-            // Salva os arquivos
-            clientesAtualizado.Close();
-            clientesRegistrado.Close();
 
-            // Exclui o registro antigo
-            File.Delete("./data/clientes.txt");
+            if (senhaCliente != contaCliente.Senha && operacao == 1)
+            {
+                IA.iBank("Senha incorreta... OPERAÇÃO CANCELADA", ConsoleColor.Red);
+                Thread.Sleep(2000);
+                Console.Clear();
+            }
+            else
+            {
+                // String na qual faremos a verificação das linhas do registro
+                string? registro = "";
 
-            // Renomeia o arquivo temporario
-            File.Move("./data/temporario.txt", "./data/clientes.txt");
+                // Criação dos objeto que iremos manipular
+                StreamReader clientesRegistrado = new StreamReader("./data/clientes.txt");
+                StreamWriter clientesAtualizado = new StreamWriter("./data/temporario.txt");
 
-            //Remove a ultima linha            
-            AtualizarClientes();
+                // Enquanto ouver linhas para ler no clientesRegistrado ele efetuara o loop
+                while ((registro = clientesRegistrado.ReadLine()) != null)
+                {
 
+                    // Se linha do registro conter o CPF do cliente
+                    if (registro.Contains(contaCliente.Cpf))
+                    {
+                        // Reescrevera o registro
+                        registro = $"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}";
+                    }
+
+                    // Continua reescrevendo os registro que não foram alterados
+                    if (clientesRegistrado.EndOfStream)
+                    {
+                        clientesAtualizado.Write(registro);
+                    }
+                    else
+                    {
+                        clientesAtualizado.WriteLine(registro);
+                    }
+
+                }
+                // Salva os arquivos
+                clientesAtualizado.Close();
+                clientesRegistrado.Close();
+
+                // Exclui o registro antigo
+                File.Delete("./data/clientes.txt");
+
+                // Renomeia o arquivo temporario
+                File.Move("./data/temporario.txt", "./data/clientes.txt");
+
+                //Remove a ultima linha            
+                AtualizarClientes();
+
+                switch (operacao)
+                {
+                    case 1:
+                        Console.Clear();
+                        IA.BarraCarregamento(200);
+                        IA.iBank("Saque efetuado com sucesso !!\n", ConsoleColor.Green);
+                        BuscarCliente(contaCliente.Cpf);
+                        break;
+
+                    case 2:
+                        Console.Clear();
+                        IA.BarraCarregamento(200);
+                        IA.iBank("Depósito realizado com sucesso !!\n", ConsoleColor.Green);
+                        BuscarCliente(contaCliente.Cpf);
+                        break;
+
+                    case 3:
+                        break;
+                }
+            }
             MostrarSubMenuContaDetalhada(contaCliente);
         }
 
