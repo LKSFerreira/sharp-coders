@@ -4,12 +4,15 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        
+
         //InterfaceDoSistema.CarregarSistema();
 
         if (true) // InterfaceDoSistema.AutenticarSistema()
         {
-            InterfaceDoSistema.SelecionarMenu(InterfaceDoSistema.MostrarMenu());
+            do
+            {
+                InterfaceDoSistema.SelecionarMenu(InterfaceDoSistema.MostrarMenu());
+            } while (true);
         }
     }
 }
