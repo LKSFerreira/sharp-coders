@@ -36,6 +36,7 @@ namespace sistema_bancario
         }
         private static void ListarContas()
         {
+            AtualizarClientes();
             Console.Clear();
             MostrarTitulos(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
 
@@ -215,7 +216,7 @@ namespace sistema_bancario
 
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
             string cpfCliente = Console.ReadLine()!;
-            
+
             if (!VerificarCPF(cpfCliente))
             {
                 if (acessouDetalhesDaConta) return;
@@ -224,7 +225,7 @@ namespace sistema_bancario
 
                 IA.iBank("Obrigado, agora digite o nome completo do titular.");
                 string nomeCliente = Console.ReadLine()!.ToUpper().Trim();
-                
+
                 while (!VerificarNomeCliente(nomeCliente))
                 {
                     IA.iBank("Eii, isso não me parece um nome válido, por gentileza digite seu nome de verdade por completo.", ConsoleColor.Red);
@@ -234,27 +235,8 @@ namespace sistema_bancario
 
                 IA.iBank("Muito bom!! xD, e para finalizar...");
 
-                string senhaCliente = "";
-                string confirmaSenha = "";
-
-                do
-                {
-                    IA.iBank("digite uma senha com no mínimo 6 caracteres.");
-                    senhaCliente = LerSenha()!;
-
-
-                    while (!VerificarSenha(senhaCliente))
-                    {
-                        IA.iBank("Opa, por questões de segurança é melhor adicionarmos outra senha:", ConsoleColor.Red);
-                    }
-
-                    IA.iBank("Repita a senha para confirmar.");
-                    confirmaSenha = LerSenha()!;
-
-                    if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem", ConsoleColor.Magenta);
-
-                } while (senhaCliente != confirmaSenha);
-
+                string senhaCliente = validarSenha();;
+            
                 System.Console.WriteLine();
 
                 IA.iBank("Digite o valor do seu primeiro depósito, caso não queira digite 0");
@@ -285,6 +267,31 @@ namespace sistema_bancario
 
                 MostrarSubMenuAbrirConta();
             }
+        }
+
+        private static string validarSenha()
+        {   
+            string senhaCliente = "";
+            string confirmaSenha = "";
+
+            do
+                {
+                    IA.iBank("digite uma senha com no mínimo 6 caracteres.");
+                    senhaCliente = LerSenha()!;
+
+                    while (!VerificarSenha(senhaCliente))
+                    {
+                        IA.iBank("Opa, por questões de segurança é melhor adicionarmos outra senha:", ConsoleColor.Red);
+                        senhaCliente = LerSenha()!;
+                    }
+
+                    IA.iBank("Repita a senha para confirmar.");
+                    confirmaSenha = LerSenha()!;
+
+                    if (senhaCliente != confirmaSenha) IA.iBank("Bahhh Tchee, as senhas não conferem", ConsoleColor.Magenta);
+
+                } while (senhaCliente != confirmaSenha);
+            return senhaCliente;
         }
 
         private static string ValidarCPF(string cpfCliente)
@@ -427,7 +434,7 @@ namespace sistema_bancario
 
         public static void CarregarSistema()
         {
-            IA.iBank("Olá, eu sou o iBank, seu assiste virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
+            IA.iBank("Olá, eu sou o iBank, seu assistente virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
             MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
         }
 
@@ -619,6 +626,7 @@ namespace sistema_bancario
 
             IA.iBank("Tranferência Realizada com sucesso", ConsoleColor.Green);
             MostrarSubMenuContaDetalhada(contaCliente);
+            return;
         }
 
         private static void AtualizarConta(ContaCliente contaCliente)
