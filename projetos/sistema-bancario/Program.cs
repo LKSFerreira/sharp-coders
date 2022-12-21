@@ -3,11 +3,12 @@
 internal class Program
 {
     private static void Main(string[] args)
-    {
-
-        //InterfaceDoSistema.CarregarSistema();
-
-        if (true) // InterfaceDoSistema.AutenticarSistema()
+    {   
+        InterfaceDoSistema.CarregarSistema();
+        InterfaceDoSistema.AtualizarCredenciais();
+        InterfaceDoSistema.AtualizarClientes();
+        
+        if (InterfaceDoSistema.AutenticarSistema())
         {
             do
             {

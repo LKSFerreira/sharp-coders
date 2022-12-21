@@ -2,12 +2,41 @@ namespace sistema_bancario
 {
     public class InterfaceDoSistema
     {
+        private static string caminhoClientes = "./data/clientes.txt";
+        private static string caminhoCredenciais = "./data/credenciais.txt";
         private static string cpfCliente = "";
         private static bool acessouDetalhesDaConta = false;
         private static bool acessouTransferenciaPix = false;
-        private static string[] credenciais = File.ReadAllLines("./data/credenciais.txt");
-        private static string[] clientes = File.ReadAllLines("./data/clientes.txt");
-        private static void AtualizarClientes() { clientes = File.ReadAllLines("./data/clientes.txt"); }
+        private static string[] credenciais = File.ReadAllLines(AtualizarCredenciais());
+        private static string[] clientes = File.ReadAllLines(AtualizarClientes());
+        public static string AtualizarClientes()
+        {
+            if (!File.Exists(caminhoClientes))
+            {
+                FileStream fileStream = File.Create(caminhoClientes);
+                fileStream.Close();
+            }
+            else
+            {
+                clientes = File.ReadAllLines(caminhoClientes);
+            }
+            return caminhoClientes;
+        }
+
+        public static string AtualizarCredenciais()
+        {
+            if (!File.Exists(caminhoCredenciais))
+            {
+                FileStream fileStream = File.Create(caminhoCredenciais);
+                fileStream.Close();
+            }
+            else
+            {
+                credenciais = File.ReadAllLines(caminhoCredenciais);
+            }
+
+            return caminhoCredenciais;
+        }
 
 
         public static bool AutenticarSistema()
@@ -37,8 +66,11 @@ namespace sistema_bancario
         private static void ListarContas()
         {
             AtualizarClientes();
+
             Console.Clear();
             MostrarTitulos(TitlesMenu.clientes, ConsoleColor.DarkMagenta);
+
+            if (clientes.Length == 0) IA.iBank("Não existe nenhuma conta o Byte Bank, por gentileza entre em contato com a gerência, cabeças vão rolar... ou você pode abrir uma nova conta", ConsoleColor.Red);
 
             int idConta = clientes.Length - (clientes.Length - 1);
             string titular = "", cpf = "", senha = ""; double saldo = 0;
@@ -138,7 +170,7 @@ namespace sistema_bancario
             {
                 IA.iBank("O que deseja fazer?\n");
 
-                System.Console.WriteLine("1 - Abrir uma nova para cliente");
+                System.Console.WriteLine("1 - Abrir uma nova conta para cliente");
                 System.Console.WriteLine("2 - Detalhar conta");
                 System.Console.WriteLine("3 - Voltar ao Menu Inicial");
                 System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
@@ -172,7 +204,7 @@ namespace sistema_bancario
             } while (!acessouDetalhesDaConta);
         }
 
-        public static void MostrarCapitalByteBank()
+        private static void MostrarCapitalByteBank()
         {
             Console.Clear();
             MostrarTitulos(TitlesMenu.capital, ConsoleColor.DarkYellow);
@@ -209,7 +241,7 @@ namespace sistema_bancario
             else return -1;
         }
 
-        public static void AbrirConta()
+        private static void AbrirConta()
         {
             Console.Clear();
             InterfaceDoSistema.MostrarTitulos(TitlesMenu.novaConta, ConsoleColor.DarkGreen);
@@ -438,6 +470,20 @@ namespace sistema_bancario
         {
             IA.iBank("Olá, eu sou o iBank, seu assistente virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
             MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
+
+            if (!Directory.Exists("./data"))
+            {
+                Directory.CreateDirectory("./data");
+                PrimeiroAcesso();
+            }
+        }
+
+        private static void PrimeiroAcesso()
+        {
+            IA.iBank("Parabéns você é a primeira pessoa acessar nosso sistema...");
+            IA.iBank("Vamos criar uma credêncial, digite qual será seu usuario:");
+            string novoUsuario = Console.ReadLine()!;
+
         }
 
         private static void MostrarTitulos(string title, ConsoleColor color)
@@ -455,7 +501,7 @@ namespace sistema_bancario
             Console.ResetColor();
         }
 
-        public static string LerSenha()
+        private static string LerSenha()
         {
             List<char> senha = new List<char>();
             while (true)
@@ -646,7 +692,7 @@ namespace sistema_bancario
                         break;
                     }
                     IA.iBank("Digite a senha para finalizar a operação");
-                    senhaCliente = Console.ReadLine()!;
+                    senhaCliente = LerSenha();
                     acessouTransferenciaPix = false;
                     break;
 
@@ -689,7 +735,9 @@ namespace sistema_bancario
                             break;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 AtualizarContas(contaCliente);
             }
         }
