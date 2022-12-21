@@ -29,12 +29,12 @@ namespace sistema_bancario
             {
                 FileStream fileStream = File.Create(caminhoCredenciais);
                 fileStream.Close();
+                PrimeiroAcesso();
             }
             else
             {
                 credenciais = File.ReadAllLines(caminhoCredenciais);
             }
-
             return caminhoCredenciais;
         }
 
@@ -91,8 +91,16 @@ namespace sistema_bancario
 
                 int tamanhoNome = titular.Count();
 
+
                 ContaCliente contaCliente = new ContaCliente(titular, cpf, senha, saldo);
-                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} {new string(' ', valorTabulacao - tamanhoNome + 1)} | CPF: {contaCliente.Cpf} \t| Saldo: {contaCliente.Saldo:C2}");
+
+                string cpfFormatado = string.Format("{0:000}.{0:000}.{0:000}-{3:00}",
+                contaCliente.Cpf.Substring(0, 3),
+                contaCliente.Cpf.Substring(3, 3),
+                contaCliente.Cpf.Substring(6, 3),
+                contaCliente.Cpf.Substring(9, 2));
+
+                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} {new string(' ', valorTabulacao - tamanhoNome + 1)} | CPF: {cpfFormatado} | Saldo: {contaCliente.Saldo:C2}");
                 idConta++;
             }
             System.Console.WriteLine();
@@ -502,20 +510,20 @@ namespace sistema_bancario
 
         public static void CarregarSistema()
         {
-            IA.iBank("Olá, eu sou o iBank, seu assistente virtual, serei o responsável por ajuda-lo a utilizar nosso sistema. Seja Bem-Vindo ao");
+            IA.iBank("Olá, eu sou o iBank, seu assistente virtual, serei o responsável por ajuda-lo a utilizar nosso sistema.");
+            IA.iBank("Seja Bem-Vindo ao");
             MostrarTitulos(TitlesMenu.logo, ConsoleColor.DarkCyan);
 
             if (!Directory.Exists("./data"))
             {
                 Directory.CreateDirectory("./data");
-
-                AtualizarCredenciais();
-                PrimeiroAcesso();
             }
         }
 
         private static void PrimeiroAcesso()
         {
+            AtualizarCredenciais();
+
             IA.iBank("Parabéns você é a primeira pessoa acessar nosso sistema...");
             IA.iBank("Vamos criar uma credêncial.");
 
@@ -524,7 +532,7 @@ namespace sistema_bancario
 
             StreamWriter credenciaisStream = new StreamWriter(caminhoCredenciais, true);
 
-            if (clientes.Length > 0)
+            if (credenciais.Length > 0)
             {
                 credenciaisStream.WriteLine();
                 credenciaisStream.Write($"{novoUsuario}:{senhaUsuario}");
