@@ -8,11 +8,7 @@ namespace sistema_bancario
 
         public void Depositar(double valor)
         {
-            if (valor <= 0)
-            {
-                IA.iBank("Por gentileza, digite um valor válido");
-            }
-            else
+            if (valor > 0)
             {
                 this.Saldo += valor;
             }

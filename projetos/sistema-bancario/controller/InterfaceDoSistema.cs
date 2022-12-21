@@ -75,6 +75,13 @@ namespace sistema_bancario
             int idConta = clientes.Length - (clientes.Length - 1);
             string titular = "", cpf = "", senha = ""; double saldo = 0;
 
+            int valorTabulacao = 0;
+
+            foreach (var linha in clientes)
+            {
+                if (linha.Split(':')[0].Count() > valorTabulacao) valorTabulacao = linha.Split(':')[0].Count();
+            }
+
             foreach (var linha in clientes)
             {
                 titular = linha.Split(':')[0];
@@ -82,8 +89,10 @@ namespace sistema_bancario
                 senha = linha.Split(':')[2];
                 saldo = double.Parse(linha.Split(':')[3]);
 
+                int tamanhoNome = titular.Count();
+
                 ContaCliente contaCliente = new ContaCliente(titular, cpf, senha, saldo);
-                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} | CPF: {contaCliente.Cpf} | Saldo: {contaCliente.Saldo:C2}");
+                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} {new string(' ', valorTabulacao - tamanhoNome + 1)} | CPF: {contaCliente.Cpf} \t| Saldo: {contaCliente.Saldo:C2}");
                 idConta++;
             }
             System.Console.WriteLine();
@@ -272,7 +281,7 @@ namespace sistema_bancario
 
                 IA.iBank("Muito bom!! xD, e para finalizar...");
 
-                string senhaCliente = validarSenha(); ;
+                string senhaCliente = ValidarSenha(); ;
 
                 System.Console.WriteLine();
 
@@ -287,7 +296,7 @@ namespace sistema_bancario
 
                 ContaCliente contaCliente = new ContaCliente(nomeCliente, cpfCliente, senhaCliente, double.Parse(valorDeposito));
 
-                StreamWriter clientesStream = new StreamWriter("./data/clientes.txt", true);
+                StreamWriter clientesStream = new StreamWriter(caminhoClientes, true);
 
                 if (clientes.Length > 0)
                 {
@@ -306,7 +315,32 @@ namespace sistema_bancario
             }
         }
 
-        private static string validarSenha()
+        private static string ValidarUsuario()
+        {
+            string novoUsuario = "";
+            string confirmarUsuario = "";
+
+            do
+            {
+                IA.iBank("digite qual será seu usuário com no mínimo 6 caracteres.");
+                novoUsuario = Console.ReadLine()!;
+
+                while (!VerificarSenha(novoUsuario))
+                {
+                    IA.iBank("Opa, por questões de segurança é melhor adicionarmos outro usuário:", ConsoleColor.Red);
+                    novoUsuario = Console.ReadLine()!;
+                }
+
+                IA.iBank("Repita o usuáio para confirmar.");
+                confirmarUsuario = Console.ReadLine()!;
+
+                if (novoUsuario != confirmarUsuario) IA.iBank("Bahhh Tchee, usuarios não conferem", ConsoleColor.Magenta);
+
+            } while (novoUsuario != confirmarUsuario);
+            return novoUsuario;
+        }
+
+        private static string ValidarSenha()
         {
             string senhaCliente = "";
             string confirmaSenha = "";
@@ -474,6 +508,8 @@ namespace sistema_bancario
             if (!Directory.Exists("./data"))
             {
                 Directory.CreateDirectory("./data");
+
+                AtualizarCredenciais();
                 PrimeiroAcesso();
             }
         }
@@ -481,9 +517,25 @@ namespace sistema_bancario
         private static void PrimeiroAcesso()
         {
             IA.iBank("Parabéns você é a primeira pessoa acessar nosso sistema...");
-            IA.iBank("Vamos criar uma credêncial, digite qual será seu usuario:");
-            string novoUsuario = Console.ReadLine()!;
+            IA.iBank("Vamos criar uma credêncial.");
 
+            string novoUsuario = ValidarUsuario();
+            string senhaUsuario = ValidarSenha();
+
+            StreamWriter credenciaisStream = new StreamWriter(caminhoCredenciais, true);
+
+            if (clientes.Length > 0)
+            {
+                credenciaisStream.WriteLine();
+                credenciaisStream.Write($"{novoUsuario}:{senhaUsuario}");
+            }
+            else
+            {
+                credenciaisStream.Write($"{novoUsuario}:{senhaUsuario}");
+            }
+            credenciaisStream.Close();
+
+            IA.iBank("Usuario e senha registrados com sucesso.\n", ConsoleColor.Green);
         }
 
         private static void MostrarTitulos(string title, ConsoleColor color)
@@ -667,15 +719,19 @@ namespace sistema_bancario
         private static void OperacaoConta(ContaCliente contaCliente, byte operacao)
         {
             string? senhaCliente = "null";
+            double valorSaque = 0;
 
             switch (operacao)
             {
                 case 1:
-                    IA.iBank("Sacar uma quantia, entendi, para isso digite um valor:");
-                    contaCliente.Sacar(double.Parse(Console.ReadLine()!));
-
+                    IA.iBank("Sacar uma quantia... Sem problemas, para isso digite um valor:");
+                    valorSaque = ValidarQuantiaMinima(contaCliente);
+                    if (valorSaque == 0) { break; }
+                    if (valorSaque > contaCliente.Saldo) { break; }
+                    contaCliente.Sacar(valorSaque);
                     IA.iBank("Digite a senha para finalizar a operação");
-                    senhaCliente = Console.ReadLine()!;
+                    senhaCliente = LerSenha()!;
+
                     break;
 
                 case 2:
@@ -740,6 +796,41 @@ namespace sistema_bancario
             {
                 AtualizarContas(contaCliente);
             }
+
+            if (valorSaque > contaCliente.Saldo) IA.iBank("Saldo insuficiente", ConsoleColor.Red);
+            if (valorSaque <= 0) IA.iBank("Operação inválida", ConsoleColor.Red);
+        }
+
+        private static double ValidarQuantiaMinima(ContaCliente contaCliente)
+        {
+            string valorDigitado = Console.ReadLine()!;
+            double valorSaque = 0;
+
+            do
+            {
+
+                if (double.TryParse(valorDigitado, out valorSaque))
+                {
+                    if (valorSaque > 0 && valorSaque < 10)
+                    {
+                        IA.iBank("Lamento, o valor mínimo para saque é de R$ 10,00 ou digite 0 para cancelar.", ConsoleColor.DarkRed);
+                        valorDigitado = Console.ReadLine()!;
+                    }
+                    else if (valorSaque <= 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return valorSaque;
+                    }
+                }
+                else
+                {
+                    IA.iBank("Por gentileza, digite um valor válido ou 0 para cancelar a operação");
+
+                }
+            } while (true);
         }
 
         private static void AtualizarContas(ContaCliente contaCliente)
