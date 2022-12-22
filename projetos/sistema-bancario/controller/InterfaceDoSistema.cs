@@ -679,7 +679,7 @@ namespace sistema_bancario
             do
             {
                 IA.iBank("Digite o CPF do beneficiado");
-                cpfBeneficiado = ValidarCPF(Console.ReadLine()!);
+                cpfBeneficiado = ValidarCPF(Console.ReadLine()!.Replace(".", "").Replace("-", ""));
                 if (cpfBeneficiado.Equals(contaCliente.Cpf))
                 {
                     IA.iBank("Lamento, mas não é possível realizar um pix para você mesmo da sua própria conta", ConsoleColor.Red);
