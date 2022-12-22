@@ -130,13 +130,13 @@ namespace sistema_bancario
                     if (acessouTransferenciaPix)
                     {
                         IA.iBank("... Encontrei o CPF digitado:");
-                        System.Console.WriteLine($"Titular: {nomeCliente} | CPF: {CPF}\n");
+                        System.Console.WriteLine($"Titular: {nomeCliente} | CPF: {CPF.Insert(3, ".").Insert(7, ".").Insert(11, "-")}\n");
                         ContaCliente contaCliente = new ContaCliente(nomeCliente, CPF, senhaCliente, saldo);
                         return contaCliente;
                     }
                     else
                     {
-                        System.Console.WriteLine($"ID: {idConta} | Titular: {nomeCliente} | CPF: {CPF} | Saldo: {saldo:C2}\n");
+                        System.Console.WriteLine($"ID: {idConta} | Titular: {nomeCliente} | CPF: {CPF.Insert(3, ".").Insert(7, ".").Insert(11, "-")} | Saldo: {saldo:C2}\n");
                         ContaCliente contaCliente = new ContaCliente(nomeCliente, CPF, senhaCliente, saldo);
                         return contaCliente;
                     }
@@ -666,9 +666,16 @@ namespace sistema_bancario
         {
             AtualizarClientes();
             acessouTransferenciaPix = true;
-
-            IA.iBank("Digite o CPF do beneficiado");
-            string cpfBeneficiado = ValidarCPF(Console.ReadLine()!);
+            string cpfBeneficiado = "";
+            do
+            {
+                IA.iBank("Digite o CPF do beneficiado");
+                cpfBeneficiado = ValidarCPF(Console.ReadLine()!);
+                if (cpfBeneficiado.Equals(contaCliente.Cpf))
+                {
+                    IA.iBank("Lamento, mas não é possível realizar um pix para você mesmo da sua própria conta", ConsoleColor.Red);
+                }
+            } while (cpfBeneficiado.Equals(contaCliente.Cpf));
 
             ContaCliente contaBeneficiado = BuscarCliente(cpfBeneficiado);
 
@@ -704,19 +711,36 @@ namespace sistema_bancario
                 } while (!acessouDetalhesDaConta);
             }
 
-            IA.iBank("Digite o valor da transferência");
-            string valorTransferencia = Console.ReadLine()!;
-            double valorTransferido = 0;
+            string valorTransferencia;
+            double valorTransferido;
 
-            while (!double.TryParse(valorTransferencia, out valorTransferido))
+            do
             {
-                IA.iBank("Alguma coisa de errada, não esta certo, por gentileza, digite um valor válido ou 0 para cancelar", ConsoleColor.Red);
+                IA.iBank("Digite o valor da transferência");
+
+                valorTransferencia = Console.ReadLine()!;
+
+                if (!double.TryParse(valorTransferencia, out valorTransferido))
+                {
+                    IA.iBank("Alguma coisa de errada não esta certo, por gentileza, digite um valor válido ou 0 para cancelar", ConsoleColor.Red);
+                    valorTransferido = -1;
+                }
 
                 if (valorTransferido == 0)
                 {
-                    MostrarMenu();
+                    break;
                 }
+
+            } while (!double.TryParse(valorTransferencia, out valorTransferido));
+
+            if (valorTransferido == 0) return;
+
+            if (valorTransferido > contaCliente.Saldo)
+            {
+                IA.iBank("Saldo insuficiente", ConsoleColor.Red);
+                return;
             }
+
 
             contaCliente.Sacar(valorTransferido);
             OperacaoConta(contaCliente, 3);
@@ -726,20 +750,20 @@ namespace sistema_bancario
 
         private static void OperacaoConta(ContaCliente contaCliente, byte operacao)
         {
-            string? senhaCliente = "null";
+            string? senhaCliente = "";
+            bool senhaNaoValidada = true;
             double valorSaque = 0;
 
             switch (operacao)
             {
                 case 1:
                     IA.iBank("Sacar uma quantia... Sem problemas, para isso digite um valor:");
-                    valorSaque = ValidarQuantiaMinima(contaCliente);
+                    valorSaque = ValidarQuantiaMinima(contaCliente!);
                     if (valorSaque == 0) { break; }
                     if (valorSaque > contaCliente.Saldo) { break; }
                     contaCliente.Sacar(valorSaque);
                     IA.iBank("Digite a senha para finalizar a operação");
                     senhaCliente = LerSenha()!;
-
                     break;
 
                 case 2:
@@ -757,20 +781,24 @@ namespace sistema_bancario
                     }
                     IA.iBank("Digite a senha para finalizar a operação");
                     senhaCliente = LerSenha();
+                    senhaNaoValidada = false;
                     acessouTransferenciaPix = false;
                     break;
 
                 default:
+                    senhaNaoValidada = true;
                     break;
             }
 
-            if (senhaCliente != "null")
+            if (!senhaNaoValidada)
             {
                 if (senhaCliente != contaCliente.Senha && (operacao == 1 || operacao == 3))
                 {
                     IA.iBank("Senha incorreta... OPERAÇÃO CANCELADA", ConsoleColor.Red);
                     Thread.Sleep(2000);
                     Console.Clear();
+                    senhaNaoValidada = true;
+                    return;
                 }
                 else
                 {
@@ -798,15 +826,21 @@ namespace sistema_bancario
                             BuscarCliente(contaCliente.Cpf);
                             break;
                     }
+                    senhaNaoValidada = true;
                 }
             }
             else
             {
-                AtualizarContas(contaCliente);
+                if (senhaNaoValidada)
+                {
+                    AtualizarContas(contaCliente);
+                    senhaNaoValidada = false;
+                }
             }
 
             if (valorSaque > contaCliente.Saldo) IA.iBank("Saldo insuficiente", ConsoleColor.Red);
-            if (valorSaque <= 0) IA.iBank("Operação inválida", ConsoleColor.Red);
+
+            if (valorSaque <= 0 && acessouTransferenciaPix) IA.iBank("OPERAÇÃO CANCELADA", ConsoleColor.Red);
         }
 
         private static double ValidarQuantiaMinima(ContaCliente contaCliente)

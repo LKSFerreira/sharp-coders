@@ -20,10 +20,6 @@ namespace sistema_bancario
             {
                 this.Saldo -= valor;
             }
-            else
-            {
-                IA.iBank("Saldo insuficiente");
-            }
         }
     }
 }
