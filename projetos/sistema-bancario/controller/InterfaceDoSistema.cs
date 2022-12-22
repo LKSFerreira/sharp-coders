@@ -613,7 +613,7 @@ namespace sistema_bancario
 
             IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
 
-            cpfCliente = ValidarCPF(Console.ReadLine()!);
+            cpfCliente = ValidarCPF(Console.ReadLine()!).Replace(".","").Replace("-","");
 
             if (!VerificarCPF(cpfCliente))
             {
