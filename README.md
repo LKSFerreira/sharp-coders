@@ -11,7 +11,7 @@
 ### Projetos
  - Sistema Bancário
    - [Repositório ByteBank](https://github.com/LKSFerreira/sharp-coders/tree/main/projetos/sistema-bancario)
-   - [Release](https://github.com/LKSFerreira/sharp-coders/releases/tag/bytebank-v1.2)
+   - [Release](https://github.com/LKSFerreira/sharp-coders/releases/tag/bytebank)
 
 ### Contato
 - [LinkedIn](https://www.linkedin.com/in/lucas-ferreira-developer)
