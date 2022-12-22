@@ -9,10 +9,9 @@
 - [Gen](https://gen.com.br)
 
 ### Projetos
-  Sistema Bancário
-  
-- [Repositório ByteBank](https://github.com/LKSFerreira/sharp-coders/tree/main/projetos/sistema-bancario)
-- [Release](https://github.com/LKSFerreira/sharp-coders/releases/tag/bytebank-v1.2)
+ - Sistema Bancário
+   - [Repositório ByteBank](https://github.com/LKSFerreira/sharp-coders/tree/main/projetos/sistema-bancario)
+   - [Release](https://github.com/LKSFerreira/sharp-coders/releases/tag/bytebank-v1.2)
 
 ### Contato
 - [LinkedIn](https://www.linkedin.com/in/lucas-ferreira-developer)
