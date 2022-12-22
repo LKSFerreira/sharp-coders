@@ -94,13 +94,13 @@ namespace sistema_bancario
 
                 ContaCliente contaCliente = new ContaCliente(titular, cpf, senha, saldo);
 
-                string cpfFormatado = string.Format("{0:000}.{0:000}.{0:000}-{3:00}",
-                contaCliente.Cpf.Substring(0, 3),
-                contaCliente.Cpf.Substring(3, 3),
-                contaCliente.Cpf.Substring(6, 3),
-                contaCliente.Cpf.Substring(9, 2));
+                // string cpfFormatado = string.Format("{0:000}.{1:000}.{2:000}-{3:00}",
+                // contaCliente.Cpf.Substring(0, 3),
+                // contaCliente.Cpf.Substring(3, 3),
+                // contaCliente.Cpf.Substring(6, 3),
+                // contaCliente.Cpf.Substring(9, 2));
 
-                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} {new string(' ', valorTabulacao - tamanhoNome + 1)} | CPF: {cpfFormatado} | Saldo: {contaCliente.Saldo:C2}");
+                System.Console.WriteLine($"ID: {idConta} | Titular: {contaCliente.Titular} {new string(' ', valorTabulacao - tamanhoNome + 1)} | CPF: {contaCliente.Cpf.Insert(3, ".").Insert(7, ".").Insert(11, "-")} | Saldo: {contaCliente.Saldo:C2}");
                 idConta++;
             }
             System.Console.WriteLine();
@@ -115,7 +115,9 @@ namespace sistema_bancario
         }
 
         private static ContaCliente BuscarCliente(string cpfCliente)
-        {
+        {   
+            AtualizarClientes();
+
             int idConta = 1;
 
             foreach (var linha in clientes)
@@ -272,7 +274,7 @@ namespace sistema_bancario
             AtualizarClientes();
 
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
-            string cpfCliente = Console.ReadLine()!;
+            string cpfCliente = Console.ReadLine()!.Replace(".", "").Replace("-", "");
 
             if (!VerificarCPF(cpfCliente))
             {
@@ -321,6 +323,7 @@ namespace sistema_bancario
                 clientesStream.Close();
 
                 IA.iBank("Abertura de conta realizada com sucesso\n", ConsoleColor.Green);
+                AtualizarClientes();
 
                 MostrarSubMenuAbrirConta();
             }
@@ -412,7 +415,7 @@ namespace sistema_bancario
         }
 
         private static bool VerificarNomeCliente(string nomeCliente)
-        {
+        {   
             if (nomeCliente.Length < 8) return false;
 
             if (string.IsNullOrEmpty(nomeCliente)) return false;
@@ -471,7 +474,9 @@ namespace sistema_bancario
         }
 
         public static void SelecionarMenu(int opcaoMenu)
-        {
+        {   
+            AtualizarClientes();
+
             switch (opcaoMenu)
             {
                 case 1:
@@ -621,7 +626,8 @@ namespace sistema_bancario
         }
 
         private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
-        {
+        {   
+            AtualizarClientes();
             do
             {
                 IA.iBank("O que deseja fazer?\n");
@@ -756,6 +762,7 @@ namespace sistema_bancario
             string? senhaCliente = "";
             bool senhaNaoValidada = true;
             double valorSaque = 0;
+            AtualizarClientes();
 
             switch (operacao)
             {
@@ -850,6 +857,7 @@ namespace sistema_bancario
         {
             string valorDigitado = Console.ReadLine()!;
             double valorSaque = 0;
+            AtualizarClientes();
 
             do
             {
