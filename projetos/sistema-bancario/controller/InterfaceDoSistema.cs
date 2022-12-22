@@ -149,7 +149,10 @@ namespace sistema_bancario
         }
 
         private static bool VerificarCPF(string cpfCliente)
-        {
+        {   
+            // Remove os caracteres de formatação
+            cpfCliente = cpfCliente.Replace(".", "").Replace("-", "");
+
             cpfCliente = ValidarCPF(cpfCliente);
 
             foreach (var linha in clientes)
