@@ -38,7 +38,7 @@ namespace chatGPT
             Console.WriteLine("\n");
         }
 
-        static async Task BotOpenAIAsync(string mensagem)
+        public static async Task BotOpenAIAsync(string mensagem)
         {
             var openAI = new OpenAIAPI(apiKeys: API_KEY, engine: Engine.Davinci);
 
@@ -50,6 +50,42 @@ namespace chatGPT
             var result = await openAI.Completions.CreateCompletionAsync(request);
 
             Console.WriteLine($"{result.ToString()}");
+        }
+        public static string IniciarChat()
+        {
+            return "Eu sou o Assistant, um modelo de linguagem de computador treinado por OpenAI. Sou capaz de responder a perguntas e ajudá-lo com tarefas específicas usando meu conhecimento e habilidades de processamento de linguagem natural. Minha função principal é ajudar as pessoas a encontrar informações e resolver problemas. Caso queira encerrar o programa digite: sair";
+        }
+
+        public static string EncerrarChat()
+        {
+            return "Obrigado e até a próxima.";
+        }
+        public static void Apresentacao(string mensagem)
+        {
+
+            Random geradorAleatorio = new Random();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            foreach (char letra in mensagem)
+            {
+
+                int tempoSaida = geradorAleatorio.Next(70);
+
+                Console.Write(letra);
+
+                if (tempoSaida % 2 == 0)
+                {
+                    tempoSaida = geradorAleatorio.Next(350);
+                    Thread.Sleep(tempoSaida);
+                }
+                else
+                {
+                    Thread.Sleep(tempoSaida);
+                }
+            }
+            System.Console.Write("\n");
+            Console.ResetColor();
         }
     }
 }
