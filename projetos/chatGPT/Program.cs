@@ -1,14 +1,16 @@
 ﻿using chatGPT;
 
-ChatBot.Apresentacao(ChatBot.IniciarChat());
+ChatBot.iChat(ChatBot.IniciarChat(), ConsoleColor.Green);
+ChatBot.iChat("sair", ConsoleColor.Red);
+Console.Write($"\n");
 
 do
 {
-    string mensagem = Console.ReadLine()!;
+    string mensagem = Console.ReadLine()!.Trim();
 
     if (mensagem == "sair" || mensagem == "Sair" || mensagem == "Exit" || mensagem == "exit")
     {
-        ChatBot.Apresentacao(ChatBot.EncerrarChat());
+        ChatBot.iChat(ChatBot.EncerrarChat(), ConsoleColor.Green);
         Thread.Sleep(2500);
         break;
     }

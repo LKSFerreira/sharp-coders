@@ -1,0 +1,12 @@
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\chatGPT.exe
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\chatGPT.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\chatGPT.deps.json
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\chatGPT.runtimeconfig.json
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\chatGPT.pdb
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\System.Net.Http.Formatting.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\System.Web.Http.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\Newtonsoft.Json.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\Newtonsoft.Json.Bson.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\OpenAI.Net.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\System.Interactive.Async.dll
+C:\Users\Lucas Ferreira\Documents\GitHub\sharp-coders\projetos\chatGPT\bin\Debug\net6.0\publish\System.Linq.Async.dll

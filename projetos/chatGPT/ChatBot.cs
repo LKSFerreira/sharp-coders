@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using OpenAI;
+
 namespace chatGPT
 {
     public class ChatBot
     {
-        const string API_KEY = "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";
+        const string API_KEY = "";
+        const string API_KEY_SECONDARY = "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";
         public static async void Davinci(string mensagem)
         {
-            var openAI = new OpenAIAPI(apiKeys: API_KEY, engine: Engine.Davinci);
+            var openAI = new OpenAIAPI(apiKeys: API_KEY_SECONDARY, engine: Engine.Davinci);
 
-            int max_tokens = 4086;
+            int max_tokens = 4050;
 
             await foreach (var token in openAI.Completions.StreamCompletionEnumerableAsync(new CompletionRequest(
                 mensagem, max_tokens, 0.9, 1, presencePenalty: 0.6, frequencyPenalty: 0)))
@@ -53,30 +51,30 @@ namespace chatGPT
         }
         public static string IniciarChat()
         {
-            return "Eu sou o Assistant, um modelo de linguagem de computador treinado por OpenAI. Sou capaz de responder a perguntas e ajudá-lo com tarefas específicas usando meu conhecimento e habilidades de processamento de linguagem natural. Minha função principal é ajudar as pessoas a encontrar informações e resolver problemas. Caso queira encerrar o programa digite: sair";
+            return "Eu sou um Assistente Virtual, um Modelo de Linguagem de computador.\nSou capaz de responder a perguntas e ajudá-lo com tarefas específicas usando meu conhecimento e habilidades de processamento de linguagem natural.\nMinha função principal é ajudar as pessoas a encontrar informações e resolver problemas. Caso queira encerrar o programa digite: ";
         }
 
         public static string EncerrarChat()
         {
             return "Obrigado e até a próxima.";
         }
-        public static void Apresentacao(string mensagem)
+        public static void iChat(string mensagem, ConsoleColor color)
         {
 
             Random geradorAleatorio = new Random();
 
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = color;
 
             foreach (char letra in mensagem)
             {
 
-                int tempoSaida = geradorAleatorio.Next(70);
+                int tempoSaida = geradorAleatorio.Next(50);
 
                 Console.Write(letra);
 
                 if (tempoSaida % 2 == 0)
                 {
-                    tempoSaida = geradorAleatorio.Next(350);
+                    tempoSaida = geradorAleatorio.Next(100);
                     Thread.Sleep(tempoSaida);
                 }
                 else

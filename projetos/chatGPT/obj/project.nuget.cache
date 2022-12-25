@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "44PQF/41YvIB0KSEIXQtugjyS66l6qzVoGo00EUoHt6VXM7OjI4DM+5WUiWjqYm63w+d26AqTg2rjx+/53vAgQ==",
+  "dgSpecHash": "3DygkoQNLaoJS0X6bU/Ucsf7/ytbFhY1RpfUB0N7R0opGLdgF5GcirYoNKnMBUqdC3YCFQrHkY7VN6ilfVd6bw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Lucas Ferreira\\Documents\\GitHub\\sharp-coders\\projetos\\chatGPT\\chatGPT.csproj",
   "expectedPackageFiles": [
@@ -90,7 +90,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "O pacote 'Microsoft.AspNet.WebApi.Core 5.2.7' foi restaurado usando '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' em vez da estrutura de destino do projeto 'net6.0'. Esse pacote pode não ser totalmente compatível com o seu projeto.",
+      "message": "O pacote 'Microsoft.AspNet.WebApi.Core 5.2.7' foi restaurado usando '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' em vez da estrutura de destino do projeto 'net6.0'. Esse pacote pode não ser totalmente compatível com o seu projeto.",
       "libraryId": "Microsoft.AspNet.WebApi.Core",
       "targetGraphs": [
         "net6.0"
