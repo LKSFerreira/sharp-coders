@@ -5,7 +5,7 @@ namespace chatGPT
     public class ChatBot
     {
         const string API_KEY = "";
-        const string API_KEY_SECONDARY = "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";
+        const string API_KEY_SECONDARY = "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";
         public static async void Davinci(string mensagem)
         {
             var openAI = new OpenAIAPI(apiKeys: API_KEY_SECONDARY, engine: Engine.Davinci);
