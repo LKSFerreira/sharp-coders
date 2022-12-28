@@ -33,7 +33,7 @@ namespace jogo_da_velha.controller
                     ExibirRank();
                     break;
                 case "3":
-                    // Estatísticas do jogador
+                    ExibirStatusJogador();
                     break;
                 case "0":
                     Environment.Exit(0);
@@ -42,6 +42,34 @@ namespace jogo_da_velha.controller
                     Console.Clear();
                     Console.WriteLine($"    Por favor seleciona uma opção válida \n");
                     break;
+            }
+        }
+
+        private static void ExibirStatusJogador()
+        {
+            Console.WriteLine($"    Por gentileza digete o ID do jogador");
+            int idJogador = int.Parse(Console.ReadLine());
+            Console.Write($"\n");
+
+            string jsonString = File.ReadAllText("./data/jogadores.json");
+            Jogador[] jogadores = JsonConvert.DeserializeObject<Jogador[]>(jsonString);
+
+            foreach (var jogador in jogadores.Where(player => player.Id == idJogador))
+            {
+                ArtASCII.ContruirNome(jogador.Nome.ToUpper());
+
+                Console.WriteLine($"    Pontuação: {jogador.Pontuacao}");
+                Console.WriteLine($"    Quantidade de Partidas: {jogador.QuantidadePartidas}");
+                Console.WriteLine($"    Vitórias: {jogador.Vitorias}");
+                Console.WriteLine($"    Derrotas: {jogador.Derrotas}");
+                Console.WriteLine($"    Empates: {jogador.Empates}");
+                Console.Write($"    Histórico:");
+
+                foreach (var partida in jogador.Historico)
+                {
+                    Console.Write($" {partida}");
+                }
+                Console.WriteLine($"\n");
             }
         }
 
@@ -55,7 +83,7 @@ namespace jogo_da_velha.controller
             Console.Clear();
             Console.WriteLine($"{ArtASCII.rank}");
 
-            string jsonString = File.ReadAllText("./data/rank.json");
+            string jsonString = File.ReadAllText("./data/jogadores.json");
             Jogador[] jogadores = JsonConvert.DeserializeObject<Jogador[]>(jsonString);
 
             foreach (var jogador in jogadores.OrderByDescending(player => player.Pontuacao))
@@ -64,7 +92,5 @@ namespace jogo_da_velha.controller
             }
             Console.Write($"\n");
         }
-
-
     }
 }

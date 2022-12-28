@@ -1,0 +1,59 @@
+[
+    {
+        "id": 1,
+        "nome": "Lucas Ferreira",
+        "pontuacao": 50,
+        "quantidadePartidas": 5,
+        "vitorias": 5,
+        "derrotas": 0,
+        "empates": 0,
+        "historico": [
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105"
+        ]
+    },
+    {
+        "id": 2,
+        "nome": "Isabelly Sofia",
+        "pontuacao": 100,
+        "quantidadePartidas": 10,
+        "vitorias": 10,
+        "derrotas": 0,
+        "empates": 0,
+        "historico": [
+            "106",
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115"
+        ]
+    },
+    {
+        "id": 3,
+        "nome": "Vanderleia Gomes",
+        "pontuacao": 80,
+        "quantidadePartidas": 8,
+        "vitorias": 8,
+        "derrotas": 0,
+        "empates": 0,
+        "historico": [
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123"
+        ]
+    }
+]
