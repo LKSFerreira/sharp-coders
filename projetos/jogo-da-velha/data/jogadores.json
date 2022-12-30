@@ -1,13 +1,13 @@
 [
     {
-        "id": 1,
-        "nome": "Lucas Ferreira",
-        "pontuacao": 50,
-        "quantidadePartidas": 5,
-        "vitorias": 5,
-        "derrotas": 0,
-        "empates": 0,
-        "historico": [
+        "Id": 1,
+        "Nome": "Lucas Ferreira",
+        "Pontuacao": 50,
+        "QuantidadePartidas": 5,
+        "Vitorias": 5,
+        "Derrotas": 0,
+        "Empates": 0,
+        "Historico": [
             "100",
             "101",
             "102",
@@ -17,14 +17,14 @@
         ]
     },
     {
-        "id": 2,
-        "nome": "Isabelly Sofia",
-        "pontuacao": 100,
-        "quantidadePartidas": 10,
-        "vitorias": 10,
-        "derrotas": 0,
-        "empates": 0,
-        "historico": [
+        "Id": 2,
+        "Nome": "Isabelly Sofia",
+        "Pontuacao": 100,
+        "QuantidadePartidas": 10,
+        "Vitorias": 10,
+        "Derrotas": 0,
+        "Empates": 0,
+        "Historico": [
             "106",
             "107",
             "108",
@@ -38,14 +38,14 @@
         ]
     },
     {
-        "id": 3,
-        "nome": "Vanderleia Gomes",
-        "pontuacao": 80,
-        "quantidadePartidas": 8,
-        "vitorias": 8,
-        "derrotas": 0,
-        "empates": 0,
-        "historico": [
+        "Id": 3,
+        "Nome": "Vanderleia Gomes",
+        "Pontuacao": 80,
+        "QuantidadePartidas": 8,
+        "Vitorias": 8,
+        "Derrotas": 0,
+        "Empates": 0,
+        "Historico": [
             "116",
             "117",
             "118",
@@ -55,5 +55,15 @@
             "122",
             "123"
         ]
+    },
+    {
+        "Id": 4,
+        "Nome": "Tony Stark",
+        "Pontuacao": 0,
+        "QuantidadePartidas": 0,
+        "Vitorias": 0,
+        "Derrotas": 0,
+        "Empates": 0,
+        "Historico": null
     }
 ]

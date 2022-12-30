@@ -11,15 +11,14 @@ namespace jogo_da_velha.view
      ╚════╝  ╚═════╝  ╚═════╝  ╚═════╝     ╚═════╝ ╚═╝  ╚═╝      ╚═══╝  ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
      ";
         public static string tabuleiroDaVelha = @"
-    ╔═════╦═════╦═════╗
-    ║  1  ║  2  ║  3  ║ 
-    ╠═════╬═════╬═════╣
-    ║  4  ║  5  ║  6  ║ 
-    ╠═════╬═════╬═════╣
-    ║  7  ║  8  ║  9  ║ 
-    ╚═════╩═════╩═════╝
-       A     B     C   
-    ";
+      ╔═════╦═════╦═════╗
+    3 ║     ║     ║     ║
+      ╠═════╬═════╬═════╣
+    2 ║     ║     ║     ║
+      ╠═════╬═════╬═════╣
+    1 ║     ║     ║     ║
+      ╚═════╩═════╩═════╝
+         A     B     C";
 
 
         public static string rank = @"
@@ -142,6 +141,35 @@ namespace jogo_da_velha.view
   
   
   ";
+        private static string TAB = @"   
+    
+    
+    ";
+        private static string cara = @"
+     .----------------. 
+    | .--------------. |
+    | |  ____  ____  | |
+    | | |_   ||   _| | |
+    | |   | |__| |   | |
+    | |   |  __  |   | |
+    | |  _| |  | |_  | |
+    | | |____||____| | |
+    | |              | |
+    | '--------------' |
+    '------------------' ";
+        private static string coroa = @"
+     .----------------. 
+    | .--------------. |
+    | |  _________   | |
+    | | |  _   _  |  | |
+    | | |_/ | | \_|  | |
+    | |     | |      | |
+    | |    _| |_     | |
+    | |   |_____|    | |
+    | |              | |
+    | '--------------' |
+     '----------------' ";
+
         private static IDictionary<char, string> dicionario = new Dictionary<char, string>
         {
             {'A', A},
@@ -170,14 +198,15 @@ namespace jogo_da_velha.view
             {'W', W},
             {'Y', Y},
             {'Z', Z},
-            {' ', SPACE},
+            {' ', SPACE}
         };
 
         public static void ContruirNome(string nome)
         {
+            nome = nome.ToUpper();
             string[] linhaDasLetras = new string[4];
 
-            foreach (char letra in nome)
+            foreach (char letra in nome.Insert(0, "  "))
             {
                 string[] temporaria = ArtASCII.dicionario[letra].Split(Environment.NewLine);
                 for (int i = 0; i < 4; i++)
@@ -192,6 +221,8 @@ namespace jogo_da_velha.view
             }
         }
     }
+
+
 
 
 
