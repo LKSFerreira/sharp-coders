@@ -384,7 +384,7 @@ namespace sistema_bancario
             while (!IsCPF(cpfCliente))
             {
                 IA.iBank("Humm, CPF inválido, por favor digite um CPF real.", ConsoleColor.Red);
-                cpfCliente = Console.ReadLine()!;
+                cpfCliente = Console.ReadLine()!.Replace(".", "").Replace("-", "");
             }
 
             return cpfCliente;
