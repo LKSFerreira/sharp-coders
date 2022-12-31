@@ -115,7 +115,7 @@ namespace sistema_bancario
         }
 
         private static ContaCliente BuscarCliente(string cpfCliente)
-        {   
+        {
             AtualizarClientes();
 
             int idConta = 1;
@@ -151,7 +151,7 @@ namespace sistema_bancario
         }
 
         private static bool VerificarCPF(string cpfCliente)
-        {   
+        {
             // Remove os caracteres de formatação
             cpfCliente = cpfCliente.Replace(".", "").Replace("-", "");
 
@@ -345,7 +345,7 @@ namespace sistema_bancario
                     novoUsuario = Console.ReadLine()!;
                 }
 
-                IA.iBank("Repita o usuáio para confirmar.");
+                IA.iBank("Repita o usuário para confirmar.");
                 confirmarUsuario = Console.ReadLine()!;
 
                 if (novoUsuario != confirmarUsuario) IA.iBank("Bahhh Tchee, usuarios não conferem", ConsoleColor.Magenta);
@@ -415,7 +415,7 @@ namespace sistema_bancario
         }
 
         private static bool VerificarNomeCliente(string nomeCliente)
-        {   
+        {
             if (nomeCliente.Length < 8) return false;
 
             if (string.IsNullOrEmpty(nomeCliente)) return false;
@@ -474,7 +474,7 @@ namespace sistema_bancario
         }
 
         public static void SelecionarMenu(int opcaoMenu)
-        {   
+        {
             AtualizarClientes();
 
             switch (opcaoMenu)
@@ -613,7 +613,7 @@ namespace sistema_bancario
 
             IA.iBank(@"Digite o CPF do titular da conta, ~/ Per Favore \~");
 
-            cpfCliente = ValidarCPF(Console.ReadLine()!).Replace(".","").Replace("-","");
+            cpfCliente = ValidarCPF(Console.ReadLine()!).Replace(".", "").Replace("-", "");
 
             if (!VerificarCPF(cpfCliente))
             {
@@ -626,7 +626,7 @@ namespace sistema_bancario
         }
 
         private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
-        {   
+        {
             AtualizarClientes();
             do
             {
@@ -774,11 +774,13 @@ namespace sistema_bancario
                     contaCliente.Sacar(valorSaque);
                     IA.iBank("Digite a senha para finalizar a operação");
                     senhaCliente = LerSenha()!;
+                    senhaNaoValidada = false;
                     break;
 
                 case 2:
                     IA.iBank("Perfeito, qual o valor deseja depositar?");
                     contaCliente.Depositar(double.Parse(Console.ReadLine()!));
+                    senhaNaoValidada = false;
                     break;
 
                 case 3:
