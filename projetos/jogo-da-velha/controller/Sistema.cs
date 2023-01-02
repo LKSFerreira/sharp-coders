@@ -176,44 +176,75 @@ namespace jogo_da_velha.controller
         {"B3",44},
         {"C3",50}
     };
+        public static HashSet<string> coordenadasOcupadas = new();
+        static IDictionary<string, int> coordOcupadas = new Dictionary<string, int>
+    {
+        {"A1",1},
+        {"B1",2},
+        {"C1",3},
+        {"A2",4},
+        {"B2",5},
+        {"C2",6},
+        {"A3",7},
+        {"B3",8},
+        {"C3",9}
+    };
+        private static HashSet<string> posicoesRelativoas = new HashSet<string>
+        { "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
         public static Tuple<int, string> RealizarJogada(string tabuleiro, string coordenada, string X_ou_O)
         {
-            int coord = int.Parse(coordenada);
-
-            switch (coord)
+            while (!posicoesRelativoas.Contains(coordenada))
             {
-                case 1:
-                    coordenada = "A1";
-                    break;
-                case 2:
-                    coordenada = "B1";
-                    break;
-                case 3:
-                    coordenada = "C1";
-                    break;
-                case 4:
-                    coordenada = "A2";
-                    break;
-                case 5:
-                    coordenada = "B2";
-                    break;
-                case 6:
-                    coordenada = "C2";
-                    break;
-                case 7:
-                    coordenada = "A3";
-                    break;
-                case 8:
-                    coordenada = "B3";
-                    break;
-                case 9:
-                    coordenada = "C3";
-                    break;
-                default:
-                    Console.WriteLine($"    Coordenada inválida");
-                    break;
+                Console.WriteLine($"Por gentileza, digite um coordenada válida");
+                coordenada = Console.ReadLine();
             }
+
+            while (coordenadasOcupadas.Contains(coordenada))
+            {
+                Console.WriteLine($"Coordenada já ocupada, por gentileza digite outra posição");
+                coordenada = Console.ReadLine();
+            }
+            int coord = 0;
+
+            if (int.TryParse(coordenada, out coord))
+            {
+                switch (coord)
+                {
+                    case 1:
+                        coordenada = "A1";
+                        break;
+                    case 2:
+                        coordenada = "B1";
+                        break;
+                    case 3:
+                        coordenada = "C1";
+                        break;
+                    case 4:
+                        coordenada = "A2";
+                        break;
+                    case 5:
+                        coordenada = "B2";
+                        break;
+                    case 6:
+                        coordenada = "C2";
+                        break;
+                    case 7:
+                        coordenada = "A3";
+                        break;
+                    case 8:
+                        coordenada = "B3";
+                        break;
+                    case 9:
+                        coordenada = "C3";
+                        break;
+
+                }
+            };
+
+            coordenadasOcupadas.Add(coordenada);
+            coordenadasOcupadas.Add(coordOcupadas[coordenada].ToString());
+
             tabuleiro = tabuleiro.Remove(coordTabuleiro[coordenada], 1).Insert(coordTabuleiro[coordenada], X_ou_O);
             return Tuple.Create(coordTabuleiro[coordenada], tabuleiro);
         }

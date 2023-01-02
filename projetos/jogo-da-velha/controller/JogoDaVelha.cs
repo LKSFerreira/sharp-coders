@@ -54,28 +54,29 @@ public class JogoDaVelha
     }
     public static void IniciarPartida(Jogador player01, Jogador player02)
     {
+        Sistema.coordenadasOcupadas.Clear();
+
         Console.WriteLine($"    Sorteando primeira jogada... ");
         Thread.Sleep(3000);
         Console.Clear();
 
         var jogadorDaVez = Sistema.SortearJogador(player01, player02);
-
+        Console.WriteLine($"    Digite as coordenada pela LETRA + NÚMERO ou você pode utilizar SOMENTE os números do seu teclado como refência para a posição.");
         var tabuleiro = ArtASCII.tabuleiroDaVelha;
         Console.WriteLine($"    {tabuleiro}\n");
 
         int numeroDeJogadas = 0;
         Random random = new Random();
 
-        HashSet<int> numerosSorteados = new();
-        //HashSet<int> numerosSorteados = new HashSet<int> { 1, 2, 4, 5, 7, 8 };
+        // HashSet<int> numerosSorteados = new();
         HashSet<int> jogadasPlayer01 = new();
         HashSet<int> jogadasPlayer02 = new();
 
-        while (numerosSorteados.Count < 9)
-        {
-            int numeroAleatorio = random.Next(1, 10);
-            numerosSorteados.Add(numeroAleatorio);
-        }
+        // while (numerosSorteados.Count < 9)
+        // {
+        //     int numeroAleatorio = random.Next(1, 10);
+        //     numerosSorteados.Add(numeroAleatorio);
+        // }
 
         int posicao = 0, jogada = 1;
         string jogadorX = "X", jogadorO = "O";
@@ -84,7 +85,9 @@ public class JogoDaVelha
         {
 
             Console.WriteLine($"    {jogada}\u00aa jogada de: {jogadorDaVez[0].Nome}");
-            var realizadaJogada = Sistema.RealizarJogada(tabuleiro, numerosSorteados.ElementAt(posicao).ToString(), jogadorX);
+            string jogadaPlayer01 = Console.ReadLine().ToUpper();
+
+            var realizadaJogada = Sistema.RealizarJogada(tabuleiro, jogadaPlayer01, jogadorX);
             tabuleiro = realizadaJogada.Item2;
             jogadasPlayer01.Add(realizadaJogada.Item1);
 
@@ -96,7 +99,9 @@ public class JogoDaVelha
 
             if (Sistema.CondicionalVitoria(tabuleiro, jogadorX))
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 ArtASCII.ContruirNome($"{jogadorDaVez[0].Nome} Venceu");
+                Console.ResetColor();
                 return;
             }
 
@@ -105,8 +110,9 @@ public class JogoDaVelha
             if (posicao == 9) break;
 
             Console.WriteLine($"    {jogada}\u00aa jogada de: {jogadorDaVez[1].Nome}");
+            string jogadaPlayer02 = Console.ReadLine().ToUpper();
 
-            realizadaJogada = Sistema.RealizarJogada(tabuleiro, numerosSorteados.ElementAt(posicao).ToString(), jogadorO);
+            realizadaJogada = Sistema.RealizarJogada(tabuleiro, jogadaPlayer02, jogadorO);
             tabuleiro = realizadaJogada.Item2;
             jogadasPlayer02.Add(realizadaJogada.Item1);
 
@@ -117,7 +123,9 @@ public class JogoDaVelha
 
             if (Sistema.CondicionalVitoria(tabuleiro, jogadorO))
             {
-                ArtASCII.ContruirNome($"{jogadorDaVez[0].Nome} Venceu");
+                Console.ForegroundColor = ConsoleColor.Green;
+                ArtASCII.ContruirNome($"{jogadorDaVez[1].Nome} Venceu");
+                Console.ResetColor();
                 return;
             }
             Thread.Sleep(1000);
