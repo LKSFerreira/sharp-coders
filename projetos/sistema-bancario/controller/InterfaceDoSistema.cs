@@ -169,7 +169,14 @@ namespace sistema_bancario
                     }
                     else
                     {
-                        MostrarSubMenuAbrirConta();
+                        if (exclusaoDeConta)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            MostrarSubMenuAbrirConta();
+                        }
                     }
                 }
             }
@@ -252,6 +259,7 @@ namespace sistema_bancario
             System.Console.WriteLine("2 - Listar todas as contas registradas");
             System.Console.WriteLine("3 - Acessar uma conta");
             System.Console.WriteLine("4 - Consultar Capital de Giro do ByteBank");
+            System.Console.WriteLine("5 - Excluir uma conta");
             System.Console.WriteLine("0 - Sair do Sistema ByteBank\n");
 
             IA.iBank("Digite o número da opção:");
@@ -313,12 +321,14 @@ namespace sistema_bancario
 
                 if (clientes.Length > 0)
                 {
-                    clientesStream.WriteLine();
+                    //clientesStream.WriteLine();
                     clientesStream.Write($"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}");
+                    clientesStream.WriteLine();
                 }
                 else
                 {
                     clientesStream.Write($"{contaCliente.Titular}:{contaCliente.Cpf}:{contaCliente.Senha}:{contaCliente.Saldo:F2}");
+                    clientesStream.WriteLine();
                 }
                 clientesStream.Close();
 
@@ -493,6 +503,10 @@ namespace sistema_bancario
                     MostrarCapitalByteBank();
                     SelecionarMenu(MostrarMenu());
                     break;
+                case 5:
+                    ExcluirContar();
+                    SelecionarMenu(MostrarMenu());
+                    break;
                 case 0:
                     SairSistemaByteBank();
                     break;
@@ -502,6 +516,33 @@ namespace sistema_bancario
                     SelecionarMenu(MostrarMenu());
                     break;
             }
+        }
+
+        private static bool exclusaoDeConta = false;
+        private static void ExcluirContar()
+        {
+            AtualizarClientes();
+
+            exclusaoDeConta = true;
+            IA.iBank("Digite o CPF para exclusão:");
+            string excluirCPF = Console.ReadLine()!.Replace(".", "").Replace("-", "");
+            excluirCPF = ValidarCPF(excluirCPF);
+
+            if (VerificarCPF(excluirCPF))
+            {
+                IA.BarraCarregamento(5);
+                clientes = clientes.Where(cpf => !cpf.Contains(excluirCPF)).ToArray();
+                File.WriteAllLines(caminhoClientes, clientes);
+
+                AtualizarClientes();
+                IA.iBank("Exclusão realizada com sucesso", ConsoleColor.Red);
+            }
+            else
+            {
+                IA.iBank($"CPF não encontrado\n");
+            }
+
+            exclusaoDeConta = false;
         }
 
         private static void SairSistemaByteBank()
@@ -627,9 +668,10 @@ namespace sistema_bancario
 
         private static void MostrarSubMenuContaDetalhada(ContaCliente contaCliente)
         {
-            AtualizarClientes();
             do
             {
+                AtualizarClientes();
+
                 IA.iBank("O que deseja fazer?\n");
 
                 System.Console.WriteLine("1 - Sacar");
@@ -665,7 +707,7 @@ namespace sistema_bancario
 
                     default:
                         Console.Clear();
-                        IA.iBank("Opss, o valor digitado é inválido, por favor selecione uma das opções disponíveis.\n", ConsoleColor.Red);
+                        IA.iBank("Opss, opção inválida, por favor selecione uma das opções disponíveis.\n", ConsoleColor.Red);
                         break;
                 }
             } while (!acessouDetalhesDaConta);
