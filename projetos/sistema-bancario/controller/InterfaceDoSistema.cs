@@ -155,8 +155,6 @@ namespace sistema_bancario
             // Remove os caracteres de formatação
             cpfCliente = cpfCliente.Replace(".", "").Replace("-", "");
 
-            cpfCliente = ValidarCPF(cpfCliente);
-
             foreach (var linha in clientes)
             {
                 if (linha.Split(':')[1].Equals(cpfCliente))
@@ -283,6 +281,8 @@ namespace sistema_bancario
 
             IA.iBank("Por gentileza, digite o CPF do titular da conta:");
             string cpfCliente = Console.ReadLine()!.Replace(".", "").Replace("-", "");
+
+            cpfCliente = ValidarCPF(cpfCliente);
 
             if (!VerificarCPF(cpfCliente))
             {
